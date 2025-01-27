@@ -3,7 +3,9 @@ import { View, Text, TouchableOpacity, StyleSheet, StatusBar } from 'react-nativ
 import BingoCard from './components/BingoCard';
 import DrawButton from './components/DrawButton';
 import Countdown from 'bingo/src/components/CountDown';
+import DrawnNumbersPanel from './components/DrawnNumbersPanel';
 import generateTombalaCard from './utils/CardGenerator';
+import UserListPanel from 'bingo/src/components/UserList';
 
 const COLORS = ['#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#A133FF', '#33FFF3', '#FF8C33', '#8C33FF', '#33A1FF'];
 
@@ -17,24 +19,27 @@ const BingoGame = () => {
   const [countdown, setCountdown] = useState(6);
   const [isCountingDown, setIsCountingDown] = useState(false);
 
-    useEffect(() => {
-      let intervalId;
-        if (isCountingDown) {
-            intervalId = setInterval(() => {
-                setCountdown(prevCount => {
-                    if (prevCount <= 1) {
-                        clearInterval(intervalId);
-                        setIsCountingDown(false);
+  useEffect(() => {
+    let intervalId;
+    if (isCountingDown) {
+        intervalId = setInterval(() => {
+            setCountdown((prevCount) => {
+                if (prevCount <= 1) {
+                    clearInterval(intervalId);
+                    setIsCountingDown(false);
+                    setTimeout(() => {
                         setDrawNumberEnabled(true);
-                        return 6;
-                    }
-                    return prevCount - 1;
-                });
-            }, 1000);
-        }
-        return () => clearInterval(intervalId);
-    }, [isCountingDown]);
+                        setCountdown(6);
+                    }, 250);
 
+                    return 0;
+                }
+                return prevCount - 1;
+            });
+        }, 1000);
+    }
+    return () => clearInterval(intervalId);
+}, [isCountingDown]);
 
   const refreshCard = () => {
     setCard(generateTombalaCard());
@@ -55,29 +60,33 @@ const BingoGame = () => {
   const drawNumber = () => {
     if (drawNumberEnabled) {
       startCountdown();
-      let randomNumber;
+        let randomNumber;
         do {
-           randomNumber = Math.floor(Math.random() * 90) + 1;
+            randomNumber = Math.floor(Math.random() * 90) + 1;
         } while (drawnNumbers.includes(randomNumber));
 
         setDrawnNumbers([...drawnNumbers, randomNumber]);
         setCurrentNumber(randomNumber);
-      }
-    };
+    }
+  };
 
   const handleCellPress = (row, col, num) => {
       if (drawnNumbers.includes(num)) {
-            setMarkedNumbers(prevMarked => ({
-                ...prevMarked,
-                [`${row}-${col}`]: true
-            }));
-        }
+          setMarkedNumbers(prevMarked => ({
+              ...prevMarked,
+              [`${row}-${col}`]: true
+          }));
+      }
   };
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+        <View style={styles.header}>
+            <UserListPanel />
+        </View>
         <Countdown countdown={countdown} isCountingDown={isCountingDown} />
+
       <View style={styles.contentContainer}>
         <DrawButton
           bgColor={bgColor}
@@ -92,6 +101,7 @@ const BingoGame = () => {
           handleCellPress={handleCellPress}
          />
       </View>
+        <DrawnNumbersPanel drawnNumbers={drawnNumbers} />
       <TouchableOpacity onPress={refreshCard} style={styles.button}>
         <Text style={styles.buttonText}>Yenile</Text>
       </TouchableOpacity>
@@ -100,15 +110,36 @@ const BingoGame = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  contentContainer: {
-    alignItems: 'center',
-  },
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    header: {
+        position: 'absolute',
+        top: 20,
+        left: 0,
+        right: 0,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 10,
+    },
+    leftIcons: {
+      flexDirection: 'row',
+    },
+    iconButton: {
+        padding: 10,
+    },
+    logoutButton: {
+        padding: 10,
+    },
+    contentContainer: {
+        alignItems: 'center',
+        marginTop: 50,
+        marginBottom: 50,
+      },
   button: {
     marginTop: 20,
     padding: 12,
