@@ -6,6 +6,7 @@ import Countdown from 'bingo/src/components/CountDown';
 import DrawnNumbersPanel from './components/DrawnNumbersPanel';
 import generateTombalaCard from './utils/CardGenerator';
 import UserListPanel from 'bingo/src/components/UserList';
+import LogoutButton from 'bingo/src/components/LogoutButton';
 
 const COLORS = ['#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#A133FF', '#33FFF3', '#FF8C33', '#8C33FF', '#33A1FF'];
 
@@ -84,6 +85,7 @@ const BingoGame = () => {
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
         <View style={styles.header}>
             <UserListPanel />
+            <LogoutButton />
         </View>
         <Countdown countdown={countdown} isCountingDown={isCountingDown} />
 
