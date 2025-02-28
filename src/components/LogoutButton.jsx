@@ -1,11 +1,13 @@
-// components/LogoutButton.js
 import React from 'react';
 import { TouchableOpacity, StyleSheet, View } from 'react-native';
-import Icon from 'react-native-vector-icons/AntDesign'; // AntDesign ikonlarını kullanacağız
+import Icon from 'react-native-vector-icons/MaterialIcons'; // AntDesign ikonlarını kullanacağız
+import { useNavigation } from '@react-navigation/native';
 
 const LogoutButton = () => {
-
+ const navigation = useNavigation();
+ 
   const handleLogout = () => {
+    navigation.navigate('Tabs');
   };
 
   return (

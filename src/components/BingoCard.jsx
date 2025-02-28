@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
 import NumberCell from './NumberCell';
+import { BingoContext } from 'bingo/src/context/BingoGameContext';
 
-const BingoCard = ({ card, bgColor, markedNumbers, handleCellPress }) => {
+const BingoCard = () => {
+    const { card, bgColor, markedNumbers, handleCellPress } = useContext(BingoContext);
+
     return (
         <View style={[styles.cardContainer, { backgroundColor: bgColor, borderColor: bgColor }]}>
             {card.map((row, rowIndex) => (

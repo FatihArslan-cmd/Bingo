@@ -1,7 +1,9 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
+import React, { useEffect, useRef, useContext } from 'react';
+import { View, StyleSheet, Animated, Easing } from 'react-native';
+import { BingoContext } from 'bingo/src/context/BingoGameContext';
 
-const Countdown = ({ countdown, isCountingDown }) => {
+const Countdown = () => {
+    const { countdown, isCountingDown } = useContext(BingoContext);
     const scaleAnim = useRef(new Animated.Value(1)).current;
     const opacityAnim = useRef(new Animated.Value(1)).current;
     const translateYAnim = useRef(new Animated.Value(-100)).current;
@@ -43,7 +45,7 @@ const Countdown = ({ countdown, isCountingDown }) => {
             });
 
         } else {
-            if(translateYAnim._value === 80) { 
+            if(translateYAnim._value === 80) {
                 Animated.parallel([
                   Animated.timing(translateYAnim, {
                     toValue: -100,

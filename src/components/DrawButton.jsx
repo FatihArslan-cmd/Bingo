@@ -1,7 +1,9 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useContext } from 'react';
 import { TouchableOpacity, Text, StyleSheet, Animated, Easing } from 'react-native';
+import { BingoContext } from 'bingo/src/context/BingoGameContext';
 
-const DrawButton = ({ bgColor, currentNumber, drawNumber, drawNumberEnabled }) => {
+const DrawButton = () => {
+  const { bgColor, currentNumber, drawNumber, drawNumberEnabled } = useContext(BingoContext);
   const animatedValue = useRef(new Animated.Value(0)).current;
   const numberRef = useRef(currentNumber);
 
