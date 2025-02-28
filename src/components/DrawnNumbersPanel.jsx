@@ -1,8 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import React, { useState, useRef, useEffect, useContext } from 'react';
+import { View, Text, StyleSheet, ScrollView, Animated } from 'react-native';
+import { BingoContext } from 'bingo/src/context/BingoGameContext';
 
-const DrawnNumbersPanel = ({ drawnNumbers }) => {
+const DrawnNumbersPanel = () => {
+  const { drawnNumbers } = useContext(BingoContext);
   const [isVisible, setIsVisible] = useState(true);
   const scrollRef = useRef(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -13,13 +14,6 @@ const DrawnNumbersPanel = ({ drawnNumbers }) => {
         }
     }, [drawnNumbers]);
 
-  const toggleVisibility = () => {
-    Animated.timing(fadeAnim, {
-      toValue: isVisible ? 0 : 1,
-      duration: 200,
-      useNativeDriver: true,
-    }).start(() => setIsVisible(!isVisible));
-  };
 
   const scrollToEnd = () => {
       if (scrollRef.current) {
@@ -46,7 +40,7 @@ const DrawnNumbersPanel = ({ drawnNumbers }) => {
            </ScrollView>
         </View>
       )}
-  
+
     </Animated.View>
   );
 };

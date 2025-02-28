@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { BingoContext } from 'bingo/src/context/BingoGameContext';
 
-const NumberCell = ({ num, row, col, bgColor, markedNumbers, handleCellPress }) => {
+const NumberCell = ({ num, row, col }) => {
+    const { bgColor, markedNumbers, handleCellPress } = useContext(BingoContext);
     return (
         <TouchableOpacity
             key={col}
