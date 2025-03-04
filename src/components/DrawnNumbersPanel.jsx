@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-      backgroundColor: '#fff',
+      backgroundColor: 'transparent',
     paddingBottom: 10,
     borderTopLeftRadius: 15,
       borderTopRightRadius: 15,
