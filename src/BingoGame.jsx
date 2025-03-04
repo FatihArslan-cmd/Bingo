@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { View, StyleSheet, StatusBar } from 'react-native';
 import BingoCard from './components/BingoCard';
 import DrawButton from './components/DrawButton';

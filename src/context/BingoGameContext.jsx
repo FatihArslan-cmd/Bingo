@@ -1,6 +1,6 @@
-// BingoGameContext.js
-import React, { createContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useState, useEffect, useRef, useContext } from 'react'; // Import useContext
 import generateTombalaCard from '../utils/CardGenerator';
+import { useBingoWebSocket } from '../../../../src/context/BingoGameWebsocket.js';
 
 const COLORS = ['#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#A133FF', '#33FFF3', '#FF8C33', '#8C33FF', '#33A1FF'];
 
@@ -23,6 +23,8 @@ export const BingoContextProvider = ({ children }) => {
     const [emojiAnimationTrigger, setEmojiAnimationTrigger] = useState(0);
     const [isEmojiAnimating, setIsEmojiAnimating] = useState(false);
     const [displayEmojis, setDisplayEmojis] = useState(true); // New state to control emoji display
+
+    const { sendMessage } = useBingoWebSocket(); // Get sendMessage from WebSocket Context
 
     useEffect(() => {
         let intervalId;
@@ -87,11 +89,16 @@ export const BingoContextProvider = ({ children }) => {
     };
 
     // Emoji functions
-    const handleEmojiSelect = (emoji) => {
+    const handleEmojiSelectContext = (emoji) => { // Renamed to avoid confusion in EmojiPanel
+        console.log("BingoGameContext: handleEmojiSelectContext called for emoji:", emoji, "isEmojiAnimating:", isEmojiAnimating); // ADD THIS LOG
         if (!isEmojiAnimating) {
             setSelectedEmoji(emoji);
             setIsEmojiAnimating(true);
             setEmojiAnimationTrigger(prevTrigger => prevTrigger + 1);
+            sendMessage({ type: 'send-emoji', emoji: emoji }); // Send emoji via WebSocket
+            console.log('Emoji sent via WebSocket:', emoji);
+        } else {
+            console.log("BingoGameContext: Emoji animation is in progress, emoji send blocked."); // ADD THIS LOG
         }
     };
 
@@ -136,7 +143,7 @@ export const BingoContextProvider = ({ children }) => {
                 selectedEmoji,
                 setSelectedEmoji,
                 emojis,
-                handleEmojiSelect,
+                handleEmojiSelectContext, // Renamed in context value as well
                 handleEmojiButtonPress,
                 closeEmojiPanel,
                 emojiAnimationTrigger,
