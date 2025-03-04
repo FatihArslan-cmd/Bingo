@@ -4,28 +4,39 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import CustomModal from '../../../../src/components/CustomModal';
 import api from '../../../../src/shared/states/api';
 import { getToken } from '../../../../src/shared/states/api';
+import { useNavigation } from '@react-navigation/native'; // useNavigation'ı import et
+
 const LogoutButton = () => {
 
   const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
+  const navigation = useNavigation(); // navigation nesnesini al
 
   const handleLogoutConfirmation = () => {
     setIsLogoutModalVisible(true);
   };
 
   const handleLogout = async () => {
-    setIsLogoutModalVisible(false); // Close the modal first
+    setIsLogoutModalVisible(false);
     try {
-      const token = await getToken(); // Get the token
+      const token = await getToken();
       const headers = {
-        'Authorization': `Bearer ${token}`, // Include bearer token
-        'Content-Type': 'application/json', // Set content type
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
       };
-      await api.post('/lobby/end-game', {}, { headers }); // Call the end game endpoint with headers
+      await api.post('/lobby/end-game', {}, { headers });
       console.log("End game request sent on logout with headers");
+      // Başarılı logout durumunda yapılacak işlemler (isteğe bağlı, belki başka bir sayfaya yönlendirme vb.)
     } catch (error) {
       console.error("Error ending game on logout:", error);
-      // Handle error appropriately, maybe show an alert to the user
-    } 
+      if (error.response && error.response.status === 403) {
+        console.log("403 hatası alındı, Tabs sayfasına yönlendiriliyor.");
+        navigation.navigate('Tabs'); // 403 hatası durumunda Tabs sayfasına git
+      } else {
+        // Diğer hatalar için genel hata işleme (isteğe bağlı)
+        console.error("Logout sırasında beklenmeyen bir hata oluştu:", error);
+        // Belki kullanıcıya bir hata mesajı gösterme
+      }
+    }
   };
 
   const handleCancelLogout = () => {
