@@ -1,4 +1,3 @@
-// AnimatedEmoji.js
 import React, { useRef, useEffect, useState, useContext } from 'react'; // Added useContext
 import { Animated, Text, StyleSheet } from 'react-native';
 import { useBingoWebSocket } from '../../../../src/context/BingoGameWebsocket.js';

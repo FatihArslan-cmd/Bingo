@@ -1,5 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, StatusBar } from 'react-native';
+import {
+  Text, // Keep Text import if used elsewhere, otherwise remove
+  IconButton, // Keep IconButton import if used elsewhere, otherwise remove
+  Surface, // Keep Surface import if used elsewhere, otherwise remove
+  TouchableRipple, // Keep TouchableRipple import if used elsewhere, otherwise remove
+} from 'react-native-paper';
 import BingoCard from './components/BingoCard';
 import DrawButton from './components/DrawButton';
 import Countdown from './components/CountDown';
@@ -11,37 +17,47 @@ import EmojiButton from 'bingo/src/components/EmojiButon';
 import EmojiPanel from 'bingo/src/components/EmojiPanel';
 import AnimatedEmoji from 'bingo/src/components/AnimatedEmoji';
 import { BingoContextProvider } from 'bingo/src/context/BingoGameContext';
+import MessageComponent from './components/MessageComponent';
+import LastMessage from './components/LastMessage'; // Import LastMessage component
 
 const BingoGame = () => {
   useDisableBackButton();
 
+
+
   return (
-    <BingoContextProvider>
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-      <View style={styles.header}>
-        <View style={styles.userPanelContainer}>
-          <UserListPanel />
-        </View>
-        <View style={styles.logoutButtonContainer}>
-          <LogoutButton />
-        </View>
-      </View>
-      <Countdown />
+      <BingoContextProvider>
+        <View style={styles.container}>
+          <StatusBar barStyle="transparent"/>
 
-      <View style={styles.contentContainer}>
-         <DrawButton />
-         <BingoCard />
-      </View>
-      <View style={styles.emojiButtonContainer}>
-        <EmojiButton />
-        <AnimatedEmoji />
-      </View>
-      <EmojiPanel />
-      <DrawnNumbersPanel />
+          <LastMessage/>
 
-    </View>
-    </BingoContextProvider>
+          <View style={styles.header}>
+            <View style={styles.userPanelContainer}>
+              <UserListPanel />
+            </View>
+            <View style={styles.logoutButtonContainer}>
+              <LogoutButton />
+            </View>
+          </View>
+
+          <Countdown />
+          <View style={styles.contentContainer}>
+            <DrawButton />
+            <BingoCard />
+          </View>
+
+          <View style={styles.emojiButtonContainer}>
+            <EmojiButton />
+            <AnimatedEmoji />
+          </View>
+
+          <EmojiPanel />
+          <DrawnNumbersPanel />
+
+          <MessageComponent/>
+        </View>
+      </BingoContextProvider>
   );
 };
 
@@ -72,13 +88,13 @@ const styles = StyleSheet.create({
   contentContainer: {
     alignItems: 'center',
     marginTop: 50,
-    marginBottom: 20, // Reduced marginBottom to give space for EmojiButton
+    marginBottom: 20,
   },
   emojiButtonContainer: {
     position: 'absolute',
-    right: 20, // Align to the right side with some margin
-    top: '80%', // Vertically center (approximately, needs adjustment)
-    zIndex: 10, // Ensure it's above other elements if needed
+    right: 20,
+    top: '80%',
+    zIndex: 10,
   },
 });
 

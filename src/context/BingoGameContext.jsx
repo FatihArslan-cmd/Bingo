@@ -114,6 +114,21 @@ export const BingoContextProvider = ({ children }) => {
         setDisplayEmojis(!displayEmojis);
     };
 
+  const [isMessageModalVisible, setMessageModalVisible] = useState(false);
+  const [lastMessage, setLastMessage] = useState('');
+
+  const openMessageModal = () => {
+    setMessageModalVisible(true);
+  };
+
+  const closeMessageModal = () => {
+    setMessageModalVisible(false);
+  };
+
+  const handleNewMessage = (messageText) => {
+    setLastMessage(messageText);
+  };
+
 
     return (
         <BingoContext.Provider
@@ -151,6 +166,12 @@ export const BingoContextProvider = ({ children }) => {
                 setIsEmojiAnimating,
                 displayEmojis, // Expose displayEmojis to context
                 toggleDisplayEmojis, // Expose toggleDisplayEmojis to context
+                openMessageModal,
+                closeMessageModal,
+                isMessageModalVisible,
+                lastMessage,
+                handleNewMessage
+                
             }}
         >
             {children}
