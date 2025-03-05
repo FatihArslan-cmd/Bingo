@@ -30,21 +30,8 @@ const MessageComponent = () => {
       sender: 'Player 2',
       timestamp: '1m ago',
       profilePic: 'https://example.com/player2.jpg'
-    },
-    {
-      id: '3',
-      text: 'This is a longer message to test scrolling.',
-      sender: 'Player 1',
-      timestamp: '5s ago',
-      profilePic: 'https://example.com/player1.jpg'
-    },
-    {
-      id: '4',
-      text: 'Another message to ensure scrolling works.',
-      sender: 'Player 2',
-      timestamp: 'Just now',
-      profilePic: 'https://example.com/player2.jpg'
-    },
+    }
+  
   ]);
   const [currentMessage, setCurrentMessage] = useState('');
 

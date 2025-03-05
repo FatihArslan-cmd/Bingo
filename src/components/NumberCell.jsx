@@ -1,23 +1,25 @@
-import React, { useContext } from 'react';
+import React, { useContext, memo } from 'react'; // memo ekledik
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { BingoContext } from 'bingo/src/context/BingoGameContext';
 
-const NumberCell = ({ num, row, col }) => {
+const NumberCell = memo(({ num, row, col }) => { // memo ile sardık
     const { bgColor, markedNumbers, handleCellPress } = useContext(BingoContext);
+    const isMarked = markedNumbers[`${row}-${col}`]; // İşaretli mi kontrolü daha verimli
+
     return (
         <TouchableOpacity
-            key={col}
             onPress={() => handleCellPress(row, col, num)}
             style={[
                 styles.cell,
                 num !== null && styles.filledCell,
-                markedNumbers[`${row}-${col}`] && styles.markedCell
+                isMarked && styles.markedCell // isMarked değişkenini kullandık
             ]}
+            activeOpacity={0.7} // TouchableOpacity için geri bildirim
         >
-            {num !== null && <Text style={[styles.text, { color: markedNumbers[`${row}-${col}`] ? '#fff' : bgColor }]}>{num}</Text>}
+            {num !== null && <Text style={[styles.text, isMarked ? styles.markedText : styles.defaultText, { color: isMarked ? '#fff' : bgColor }]}>{num}</Text>}
         </TouchableOpacity>
     );
-};
+});
 
 const styles = StyleSheet.create({
     cell: {
@@ -39,6 +41,14 @@ const styles = StyleSheet.create({
         fontSize: 22,
         fontWeight: 'bold',
     },
+    defaultText: { // İşaretli olmayan hücre metin stili
+        // Varsayılan stil, gerekirse buraya ek stil tanımlanabilir.
+    },
+    markedText: { // İşaretli hücre metin stili
+        color: '#fff', // Beyaz renk zaten inline style'da tanımlı, burada tekrar tanımlamaya gerek yok ama okunabilirlik için bırakılabilir.
+        // İstenirse başka işaretli metin stilleri buraya eklenebilir.
+    },
 });
 
+NumberCell.displayName = 'NumberCell'; 
 export default NumberCell;

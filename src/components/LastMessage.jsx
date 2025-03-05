@@ -1,14 +1,19 @@
-import React, { useContext } from 'react'; // Import useContext
-import { TouchableRipple, Surface, IconButton,Text } from 'react-native-paper';
+import React, { useContext, memo, useCallback } from 'react'; // Import memo and useCallback
+import { TouchableRipple, Surface, IconButton, Text } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 import { BingoContext } from '../context/BingoGameContext'; // Import BingoContext
 
-const LastMessage = () => { // Remove props from function definition
-  const { openMessageModal, lastMessage } = useContext(BingoContext); // Use useContext to get values from context
+const LastMessage = memo(() => { // Wrap component with memo
+  const { openMessageModal, lastMessage } = useContext(BingoContext); // Use useContext
+
+  // Memoize the openMessageModal function to prevent unnecessary re-renders
+  const handlePress = useCallback(() => {
+    openMessageModal();
+  }, [openMessageModal]); // Dependency array includes openMessageModal
 
   return (
     <TouchableRipple
-      onPress={openMessageModal}
+      onPress={handlePress} // Use memoized handlePress
       borderless={true}
       style={styles.messageTouchable}
     >
@@ -26,10 +31,9 @@ const LastMessage = () => { // Remove props from function definition
       </View>
     </TouchableRipple>
   );
-};
+});
 
 const styles = StyleSheet.create({
-
   messageTouchable: {
     position: 'absolute',
     top: 45,
@@ -58,8 +62,9 @@ const styles = StyleSheet.create({
   messageIcon: {
     backgroundColor: '#e0e0e0',
     borderRadius: 20,
-    zIndex:20
+    zIndex: 20,
   },
 });
 
+LastMessage.displayName = 'LastMessage';
 export default LastMessage;

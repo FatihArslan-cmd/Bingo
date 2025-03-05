@@ -1,12 +1,21 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, ScrollView, Animated } from 'react-native';
+import React, { useState, useRef, useEffect, useContext, memo } from 'react'; // Import memo
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { BingoContext } from 'bingo/src/context/BingoGameContext';
+
+// Memoize the NumberBox component
+const NumberBox = memo(({ number }) => {
+  return (
+    <View style={styles.numberBox}>
+      <Text style={styles.numberText}>{number}</Text>
+    </View>
+  );
+});
+NumberBox.displayName = 'NumberBox'; // Optional: for better React DevTools naming
 
 const DrawnNumbersPanel = () => {
   const { drawnNumbers } = useContext(BingoContext);
   const [isVisible, setIsVisible] = useState(true);
   const scrollRef = useRef(null);
-  const fadeAnim = useRef(new Animated.Value(1)).current;
 
     useEffect(() => {
         if (scrollRef.current && drawnNumbers.length > 0) {
@@ -22,7 +31,7 @@ const DrawnNumbersPanel = () => {
   };
 
   return (
-    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
+    <View style={styles.container}>
       {isVisible && (
         <View>
            <ScrollView
@@ -33,15 +42,12 @@ const DrawnNumbersPanel = () => {
               onContentSizeChange={() => scrollToEnd()}
            >
              {drawnNumbers.map((number, index) => (
-               <View key={index} style={styles.numberBox}>
-                 <Text style={styles.numberText}>{number}</Text>
-               </View>
+               <NumberBox key={index} number={number} /> // Use the memoized NumberBox
              ))}
            </ScrollView>
         </View>
       )}
-
-    </Animated.View>
+    </View>
   );
 };
 
@@ -97,4 +103,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DrawnNumbersPanel;
+DrawnNumbersPanel.displayName = 'DrawnNumbersPanel'; // Optional: for better React DevTools naming
+export default memo(DrawnNumbersPanel); // Memoize DrawnNumbersPanel component

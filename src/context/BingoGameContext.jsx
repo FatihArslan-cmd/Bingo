@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useRef, useContext } from 'react'; // Import useContext
+import React, { createContext, useState, useEffect } from 'react'; // Import useContext
 import generateTombalaCard from '../utils/CardGenerator';
 import { useBingoWebSocket } from '../../../../src/context/BingoGameWebsocket.js';
 
@@ -24,7 +24,7 @@ export const BingoContextProvider = ({ children }) => {
     const [isEmojiAnimating, setIsEmojiAnimating] = useState(false);
     const [displayEmojis, setDisplayEmojis] = useState(true); // New state to control emoji display
 
-    const { sendMessage } = useBingoWebSocket(); // Get sendMessage from WebSocket Context
+    const { sendMessage, messages } = useBingoWebSocket(); // Get sendMessage and messages from WebSocket Context
 
     useEffect(() => {
         let intervalId;
@@ -47,45 +47,43 @@ export const BingoContextProvider = ({ children }) => {
         return () => clearInterval(intervalId);
     }, [isCountingDown]);
 
+    useEffect(() => {
+        // Get all 'number-drawn' messages and select the latest one
+        const numberDrawnMessages = messages.filter(msg => msg.type === 'number-drawn');
+        const latestMessage = numberDrawnMessages[numberDrawnMessages.length - 1];
+        
+        if (latestMessage) {
+            setCurrentNumber(latestMessage.number);
+            // Use the full drawnNumbers array from server instead of appending
+            setDrawnNumbers(latestMessage.drawnNumbers);
+            startCountdownFromMessage();
+        }
+    }, [messages]);
+
     const startCountdown = () => {
         if (drawNumberEnabled) {
-            setIsCountingDown(true)
+            setIsCountingDown(true);
             setDrawNumberEnabled(false);
         }
     };
 
+    const startCountdownFromMessage = () => { // New function to start countdown without drawNumberEnabled check
+        setIsCountingDown(true);
+        setDrawNumberEnabled(false); // Optionally disable draw button when countdown starts from message
+        setCountdown(6); // Reset countdown to 6 in case it's not already
+    };
+
+
     const drawNumber = () => {
         if (drawNumberEnabled) {
             startCountdown();
-            let randomNumber;
-            do {
-                randomNumber = Math.floor(Math.random() * 90) + 1;
-            } while (drawnNumbers.includes(randomNumber));
-
-            setDrawnNumbers([...drawnNumbers, randomNumber]);
-            setCurrentNumber(randomNumber);
+            sendMessage({ type: 'draw-number' }); // Send draw-number message via WebSocket
+            // Number drawing and state update will be handled in WebSocket message receiver (BingoGameWebsocket.js context)
         }
     };
 
-    const handleCellPress = (row, col, num) => {
-        if (drawnNumbers.includes(num)) {
-            setMarkedNumbers(prevMarked => ({
-                ...prevMarked,
-                [`${row}-${col}`]: true
-            }));
-        }
-    };
-
-    const resetGame = () => {
-        setCard(generateTombalaCard());
-        setBgColor(COLORS[Math.floor(Math.random() * COLORS.length)]);
-        setDrawnNumbers([]);
-        setCurrentNumber(null);
-        setMarkedNumbers({});
-        setDrawNumberEnabled(true);
-        setCountdown(6);
-        setIsCountingDown(false);
-        setSelectedEmoji(null);
+    const handleCellPress = ( num) => {
+        sendMessage({ type: 'mark-number', number: num });
     };
 
     // Emoji functions
@@ -152,7 +150,6 @@ export const BingoContextProvider = ({ children }) => {
                 drawNumber,
                 startCountdown,
                 handleCellPress,
-                resetGame,
                 isEmojiPanelVisible,
                 setEmojiPanelVisible,
                 selectedEmoji,
@@ -170,8 +167,8 @@ export const BingoContextProvider = ({ children }) => {
                 closeMessageModal,
                 isMessageModalVisible,
                 lastMessage,
-                handleNewMessage
-                
+                handleNewMessage,
+                startCountdownFromMessage // Expose this function if you need to trigger countdown from outside
             }}
         >
             {children}

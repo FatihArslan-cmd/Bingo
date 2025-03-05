@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useContext, memo } from 'react';
 import { View, StyleSheet } from 'react-native';
-import NumberCell from './NumberCell';
+import NumberCell from './NumberCell'; // Eğer NumberCell ayrı bir dosya ise
 import { BingoContext } from 'bingo/src/context/BingoGameContext';
 
-const BingoCard = () => {
+const BingoCard = memo(() => {
     const { card, bgColor, markedNumbers, handleCellPress } = useContext(BingoContext);
 
     return (
@@ -25,7 +25,7 @@ const BingoCard = () => {
             ))}
         </View>
     );
-};
+});
 
 const styles = StyleSheet.create({
     cardContainer: {
@@ -40,4 +40,5 @@ const styles = StyleSheet.create({
     },
 });
 
+BingoCard.displayName = 'BingoCard';
 export default BingoCard;
