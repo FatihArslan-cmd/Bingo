@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect, useContext, memo } from 'react'; //
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { BingoContext } from 'bingo/src/context/BingoGameContext';
 
-// Memoize the NumberBox component
 const NumberBox = memo(({ number }) => {
   return (
     <View style={styles.numberBox}>

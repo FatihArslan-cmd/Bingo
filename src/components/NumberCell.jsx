@@ -1,20 +1,29 @@
-import React, { useContext, memo } from 'react'; // memo ekledik
+import React, { useContext, memo } from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { BingoContext } from 'bingo/src/context/BingoGameContext';
 
-const NumberCell = memo(({ num, row, col }) => { // memo ile sardık
-    const { bgColor, markedNumbers, handleCellPress } = useContext(BingoContext);
-    const isMarked = markedNumbers[`${row}-${col}`]; // İşaretli mi kontrolü daha verimli
+const NumberCell = memo(({ num }) => {
+    const { bgColor, drawnNumbers, handleCellPress, markedNumbers } = useContext(BingoContext);
+
+    const isMarked = markedNumbers[num]; 
+
+    const isDrawn = drawnNumbers.includes(num);
 
     return (
         <TouchableOpacity
-            onPress={() => handleCellPress(row, col, num)}
+            onPress={() => {
+                if (isDrawn) { 
+                    handleCellPress(num);
+                }
+            }}
             style={[
                 styles.cell,
                 num !== null && styles.filledCell,
-                isMarked && styles.markedCell // isMarked değişkenini kullandık
+                isMarked && styles.markedCell,
+                !isDrawn && num !== null && !isMarked
             ]}
-            activeOpacity={0.7} // TouchableOpacity için geri bildirim
+            activeOpacity={0.7}
+            disabled={!isDrawn} 
         >
             {num !== null && <Text style={[styles.text, isMarked ? styles.markedText : styles.defaultText, { color: isMarked ? '#fff' : bgColor }]}>{num}</Text>}
         </TouchableOpacity>
@@ -37,18 +46,19 @@ const styles = StyleSheet.create({
     markedCell: {
         backgroundColor: 'green',
     },
+   
     text: {
         fontSize: 22,
         fontWeight: 'bold',
     },
-    defaultText: { // İşaretli olmayan hücre metin stili
-        // Varsayılan stil, gerekirse buraya ek stil tanımlanabilir.
+    defaultText: {
+        // Varsayılan stil
     },
-    markedText: { // İşaretli hücre metin stili
-        color: '#fff', // Beyaz renk zaten inline style'da tanımlı, burada tekrar tanımlamaya gerek yok ama okunabilirlik için bırakılabilir.
+    markedText: {
+        color: '#fff',
         // İstenirse başka işaretli metin stilleri buraya eklenebilir.
     },
 });
 
-NumberCell.displayName = 'NumberCell'; 
+NumberCell.displayName = 'NumberCell';
 export default NumberCell;

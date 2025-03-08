@@ -1,7 +1,7 @@
-import React, { useRef, useEffect, useState, useContext } from 'react'; // Added useContext
-import { Animated, Text, StyleSheet } from 'react-native';
+import React, { useRef, useEffect, useState, useContext } from 'react';
+import { Animated, Text, StyleSheet, View } from 'react-native'; // Added View
 import { useBingoWebSocket } from '../../../../src/context/BingoGameWebsocket.js';
-import { BingoContext } from 'bingo/src/context/BingoGameContext'; // Imported BingoContext
+import { BingoContext } from 'bingo/src/context/BingoGameContext';
 
 const AnimatedEmoji = () => {
   const positionY = useRef(new Animated.Value(0)).current;
@@ -11,22 +11,24 @@ const AnimatedEmoji = () => {
   const { messages } = useBingoWebSocket();
   const emojiMessages = messages.filter(msg => msg.type === 'emoji-received');
   const [selectedEmoji, setSelectedEmoji] = useState(null);
-  const [displayEmojis, setDisplayEmojis] = useState(true); // You might want to control this from outside or keep it always true here
-  const { setIsEmojiAnimating } = useContext(BingoContext); // Added useContext to get setIsEmojiAnimating
+  const [selectedUsername, setSelectedUsername] = useState(null); // State for username
+  const [displayEmojis, setDisplayEmojis] = useState(true);
+  const { setIsEmojiAnimating } = useContext(BingoContext);
 
   useEffect(() => {
     if (emojiMessages.length > 0 && displayEmojis) {
-      // Get the latest emoji message.  If emojiMessages length changed, this is a new message.
       const latestEmojiMessage = emojiMessages[emojiMessages.length - 1];
       const receivedEmoji = latestEmojiMessage.emoji;
+      const receivedUsername = latestEmojiMessage.username; // Extract username
 
       if (receivedEmoji) {
         setSelectedEmoji(receivedEmoji);
+        setSelectedUsername(receivedUsername); // Set username
 
         positionY.setValue(0);
         opacity.setValue(1);
         scale.setValue(1);
-        setIsEmojiAnimating(true); // Set animating to true when animation starts
+        setIsEmojiAnimating(true);
 
         Animated.parallel([
           Animated.timing(positionY, {
@@ -46,12 +48,12 @@ const AnimatedEmoji = () => {
           }),
         ]).start(() => {
           setSelectedEmoji(null);
-          setIsEmojiAnimating(false); // <-----  CRITICAL:  Is this being reached? Yes, now with setIsEmojiAnimating from context
-
+          setSelectedUsername(null); // Clear username when animation finishes
+          setIsEmojiAnimating(false);
         });
       }
     }
-  }, [emojiMessages.length, displayEmojis, positionY, opacity, scale, setSelectedEmoji, setIsEmojiAnimating]); // Added setIsEmojiAnimating to dependencies
+  }, [emojiMessages.length, displayEmojis, positionY, opacity, scale, setSelectedEmoji, setIsEmojiAnimating]);
 
   if (!selectedEmoji || !displayEmojis) {
     return null;
@@ -60,6 +62,7 @@ const AnimatedEmoji = () => {
   return (
     <Animated.View style={[styles.animatedEmojiContainer, { transform: [{ translateY: positionY }, { scale: scale }], opacity: opacity }]}>
       <Text style={styles.emojiText}>{selectedEmoji}</Text>
+      {selectedUsername && <Text style={styles.usernameText}>{selectedUsername}</Text>} 
     </Animated.View>
   );
 };
@@ -67,12 +70,18 @@ const AnimatedEmoji = () => {
 const styles = StyleSheet.create({
   animatedEmojiContainer: {
     position: 'absolute',
-    top: -30,
+    top: -30, // Adjusted top to accommodate username
     alignItems: 'center',
     justifyContent: 'center',
   },
   emojiText: {
     fontSize: 50,
+    textAlign: 'center', // Center emoji if username is present
+  },
+  usernameText: { // Style for username
+    fontSize: 16,
+    color: 'black', // Adjust color as needed
+    textAlign: 'center',
   },
 });
 

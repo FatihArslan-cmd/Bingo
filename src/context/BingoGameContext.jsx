@@ -1,30 +1,77 @@
-import React, { createContext, useState, useEffect } from 'react'; // Import useContext
-import generateTombalaCard from '../utils/CardGenerator';
+import React, { createContext, useState, useEffect, useCallback, useRef, useContext } from 'react';
 import { useBingoWebSocket } from '../../../../src/context/BingoGameWebsocket.js';
+import { UserContext } from '../../../../src/context/UserContext.jsx';
+import getUserBingoCard from 'bingo/src/service/service.js';
 
 const COLORS = ['#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#A133FF', '#33FFF3', '#FF8C33', '#8C33FF', '#33A1FF'];
 
 export const BingoContext = createContext();
 
 export const BingoContextProvider = ({ children }) => {
-    const [card, setCard] = useState(generateTombalaCard());
+    const { user } = useContext(UserContext);
+    const [card, setCard] = useState([]);
     const [bgColor, setBgColor] = useState(COLORS[Math.floor(Math.random() * COLORS.length)]);
     const [drawnNumbers, setDrawnNumbers] = useState([]);
     const [currentNumber, setCurrentNumber] = useState(null);
-    const [markedNumbers, setMarkedNumbers] = useState({});
+    const [markedNumbers, setMarkedNumbers] = useState({}); // Marked numbers will be stored as keys in an object
     const [drawNumberEnabled, setDrawNumberEnabled] = useState(true);
     const [countdown, setCountdown] = useState(6);
     const [isCountingDown, setIsCountingDown] = useState(false);
+    const [isCardLoading, setIsCardLoading] = useState(true);
+    const [cardError, setCardError] = useState(null);
 
-    // Emoji states
     const [isEmojiPanelVisible, setEmojiPanelVisible] = useState(false);
     const [selectedEmoji, setSelectedEmoji] = useState(null);
     const [emojis] = useState(['👍', '🔥', '💯', '🍀', '🚀']);
     const [emojiAnimationTrigger, setEmojiAnimationTrigger] = useState(0);
     const [isEmojiAnimating, setIsEmojiAnimating] = useState(false);
-    const [displayEmojis, setDisplayEmojis] = useState(true); // New state to control emoji display
+    const [displayEmojis, setDisplayEmojis] = useState(true);
 
-    const { sendMessage, messages } = useBingoWebSocket(); // Get sendMessage and messages from WebSocket Context
+    const [chatMessages, setChatMessages] = useState([]);
+
+    const { sendMessage, messages } = useBingoWebSocket();
+    const lastProcessedNumberDrawnRef = useRef(null);
+
+    useEffect(() => {
+        const loadBingoCard = async () => {
+            if (!user?.username) {
+                setCardError('Kullanıcı bilgisi bulunamadı!');
+                return;
+            }
+
+            try {
+                setIsCardLoading(true);
+                const apiCard = await getUserBingoCard(user.username);
+
+                if (validateBingoCard(apiCard)) {
+                    setCard(apiCard);
+                    setCardError(null);
+                } else {
+                    console.error('Geçersiz bingo kartı formatı:', apiCard);
+                    setCardError('Geçersiz bingo kartı formatı');
+                }
+            } catch (error) {
+                console.error('Bingo kartı yüklenemedi:', error);
+                setCardError('Bingo kartı yüklenemedi. Lütfen tekrar deneyin.');
+            } finally {
+                setIsCardLoading(false);
+            }
+        };
+
+        loadBingoCard();
+    }, [user?.username]);
+
+    const validateBingoCard = (card) => {
+        return (
+            Array.isArray(card) &&
+            card.length === 3 &&
+            card.every(row =>
+                Array.isArray(row) &&
+                row.length === 9 &&
+                row.every(num => num === null || (typeof num === 'number' && num >= 1 && num <= 90))
+            )
+        );
+    };
 
     useEffect(() => {
         let intervalId;
@@ -48,17 +95,32 @@ export const BingoContextProvider = ({ children }) => {
     }, [isCountingDown]);
 
     useEffect(() => {
-        // Get all 'number-drawn' messages and select the latest one
         const numberDrawnMessages = messages.filter(msg => msg.type === 'number-drawn');
-        const latestMessage = numberDrawnMessages[numberDrawnMessages.length - 1];
-        
-        if (latestMessage) {
-            setCurrentNumber(latestMessage.number);
-            // Use the full drawnNumbers array from server instead of appending
-            setDrawnNumbers(latestMessage.drawnNumbers);
-            startCountdownFromMessage();
+        const latestNumberDrawnMessage = numberDrawnMessages[numberDrawnMessages.length - 1];
+
+        if (
+            latestNumberDrawnMessage &&
+            latestNumberDrawnMessage !== lastProcessedNumberDrawnRef.current
+        ) {
+            setCurrentNumber(latestNumberDrawnMessage.number);
+            setDrawnNumbers([...drawnNumbers, latestNumberDrawnMessage.number]);
+            setIsCountingDown(true);
+            setDrawNumberEnabled(false);
+            setCountdown(6);
+            lastProcessedNumberDrawnRef.current = latestNumberDrawnMessage;
         }
-    }, [messages]);
+    }, [messages, drawnNumbers]);
+
+    useEffect(() => {
+        const newChatMessagesFromServer = messages.filter(msg =>
+            msg.type === 'chat-message-received' &&
+            !chatMessages.some(existing => existing.timestamp === msg.timestamp)
+        );
+
+        if (newChatMessagesFromServer.length > 0) {
+            setChatMessages(prev => [...prev, ...newChatMessagesFromServer]);
+        }
+    }, [messages, chatMessages]);
 
     const startCountdown = () => {
         if (drawNumberEnabled) {
@@ -67,36 +129,29 @@ export const BingoContextProvider = ({ children }) => {
         }
     };
 
-    const startCountdownFromMessage = () => { // New function to start countdown without drawNumberEnabled check
-        setIsCountingDown(true);
-        setDrawNumberEnabled(false); // Optionally disable draw button when countdown starts from message
-        setCountdown(6); // Reset countdown to 6 in case it's not already
-    };
-
-
     const drawNumber = () => {
         if (drawNumberEnabled) {
-            startCountdown();
-            sendMessage({ type: 'draw-number' }); // Send draw-number message via WebSocket
-            // Number drawing and state update will be handled in WebSocket message receiver (BingoGameWebsocket.js context)
+            sendMessage({ type: 'draw-number' });
         }
     };
 
-    const handleCellPress = ( num) => {
-        sendMessage({ type: 'mark-number', number: num });
+    const handleCellPress = (num) => {
+        if (drawnNumbers.includes(num)) { 
+            setMarkedNumbers(prevMarkedNumbers => ({
+                ...prevMarkedNumbers,
+                [num]: true
+            }));
+            sendMessage({ type: 'mark-number', number: num });
+
+        }
     };
 
-    // Emoji functions
-    const handleEmojiSelectContext = (emoji) => { // Renamed to avoid confusion in EmojiPanel
-        console.log("BingoGameContext: handleEmojiSelectContext called for emoji:", emoji, "isEmojiAnimating:", isEmojiAnimating); // ADD THIS LOG
+    const handleEmojiSelectContext = (emoji) => {
         if (!isEmojiAnimating) {
             setSelectedEmoji(emoji);
             setIsEmojiAnimating(true);
             setEmojiAnimationTrigger(prevTrigger => prevTrigger + 1);
-            sendMessage({ type: 'send-emoji', emoji: emoji }); // Send emoji via WebSocket
-            console.log('Emoji sent via WebSocket:', emoji);
-        } else {
-            console.log("BingoGameContext: Emoji animation is in progress, emoji send blocked."); // ADD THIS LOG
+            sendMessage({ type: 'send-emoji', emoji: emoji });
         }
     };
 
@@ -108,38 +163,51 @@ export const BingoContextProvider = ({ children }) => {
         setEmojiPanelVisible(false);
     };
 
-    const toggleDisplayEmojis = () => { // Function to toggle emoji display
+    const toggleDisplayEmojis = () => {
         setDisplayEmojis(!displayEmojis);
     };
 
-  const [isMessageModalVisible, setMessageModalVisible] = useState(false);
-  const [lastMessage, setLastMessage] = useState('');
+    const [isMessageModalVisible, setMessageModalVisible] = useState(false);
+    const [lastMessage, setLastMessage] = useState('');
 
-  const openMessageModal = () => {
-    setMessageModalVisible(true);
-  };
+    const openMessageModal = () => {
+        setMessageModalVisible(true);
+    };
 
-  const closeMessageModal = () => {
-    setMessageModalVisible(false);
-  };
+    const closeMessageModal = () => {
+        setMessageModalVisible(false);
+    };
 
-  const handleNewMessage = (messageText) => {
-    setLastMessage(messageText);
-  };
+    const handleNewMessage = (messageText) => {
+        setLastMessage(messageText);
+    };
 
+    const sendChatMessageContext = useCallback((messageText) => {
+        sendMessage({ type: 'chat-message', message: messageText });
+    }, [sendMessage]);
+
+    useEffect(() => {
+        if (chatMessages.length > 0) {
+            setLastMessage(chatMessages[chatMessages.length - 1].message);
+        } else {
+            setLastMessage('');
+        }
+    }, [chatMessages]);
 
     return (
         <BingoContext.Provider
             value={{
                 card,
                 setCard,
+                isCardLoading,
+                cardError,
                 bgColor,
                 setBgColor,
                 drawnNumbers,
                 setDrawnNumbers,
                 currentNumber,
                 setCurrentNumber,
-                markedNumbers,
+                markedNumbers, 
                 setMarkedNumbers,
                 drawNumberEnabled,
                 setDrawNumberEnabled,
@@ -147,31 +215,38 @@ export const BingoContextProvider = ({ children }) => {
                 setCountdown,
                 isCountingDown,
                 setIsCountingDown,
+
                 drawNumber,
                 startCountdown,
                 handleCellPress,
+
                 isEmojiPanelVisible,
                 setEmojiPanelVisible,
                 selectedEmoji,
                 setSelectedEmoji,
                 emojis,
-                handleEmojiSelectContext, // Renamed in context value as well
+                handleEmojiSelectContext,
                 handleEmojiButtonPress,
                 closeEmojiPanel,
                 emojiAnimationTrigger,
                 isEmojiAnimating,
                 setIsEmojiAnimating,
-                displayEmojis, // Expose displayEmojis to context
-                toggleDisplayEmojis, // Expose toggleDisplayEmojis to context
+                displayEmojis,
+                toggleDisplayEmojis,
+
                 openMessageModal,
                 closeMessageModal,
                 isMessageModalVisible,
                 lastMessage,
                 handleNewMessage,
-                startCountdownFromMessage // Expose this function if you need to trigger countdown from outside
+                sendChatMessageContext,
+                chatMessages,
+                startCountdown: startCountdown
             }}
         >
             {children}
         </BingoContext.Provider>
     );
 };
+
+export default BingoContextProvider;

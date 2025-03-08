@@ -1,11 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, StyleSheet, StatusBar } from 'react-native';
-import {
-  Text, // Keep Text import if used elsewhere, otherwise remove
-  IconButton, // Keep IconButton import if used elsewhere, otherwise remove
-  Surface, // Keep Surface import if used elsewhere, otherwise remove
-  TouchableRipple, // Keep TouchableRipple import if used elsewhere, otherwise remove
-} from 'react-native-paper';
 import BingoCard from './components/BingoCard';
 import DrawButton from './components/DrawButton';
 import Countdown from './components/CountDown';

@@ -14,12 +14,12 @@ const EmojiButton = () => {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: 'rgba(105, 105, 105, 0.2)', // Kapalı gri ve saydam renk
-    width: 60, // Çapı belirle
-    height: 60, // Yüksekliği çap ile aynı yap
-    borderRadius: 30, // Yarıçapı genişliğin yarısı yap ki circle olsun
-    justifyContent: 'center', // İçeriği ortala
-    alignItems: 'center',     // İçeriği ortala
+    backgroundColor: 'rgba(105, 105, 105, 0.2)',
+    width: 60, 
+    height: 60,
+    borderRadius: 30, 
+    justifyContent: 'center', 
+    alignItems: 'center',    
   },
   buttonText: {
     fontSize: 36,

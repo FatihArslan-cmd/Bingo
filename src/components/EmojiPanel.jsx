@@ -28,7 +28,7 @@ const EmojiPanel = () => {
               onPress={toggleDisplayEmojis}
             >
               <Icon
-                name={displayEmojis ? "eye-outline" : "eye-off-outline"} // Eye icon to toggle visibility
+                name={displayEmojis ? "eye-outline" : "eye-off-outline"}
                 size={24}
                 color="#333"
               />
