@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useContext } from 'react';
 import { Animated, Text, StyleSheet, View } from 'react-native'; // Added View
-import { useBingoWebSocket } from '../../../../src/context/BingoGameWebsocket.js';
+import { useBingoWebSocket } from '../../../../../../src/context/BingoGameWebsocket';
 import { BingoContext } from 'bingo/src/context/BingoGameContext';
 
 const AnimatedEmoji = () => {

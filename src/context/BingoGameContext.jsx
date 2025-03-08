@@ -5,7 +5,7 @@ import getUserBingoCard from 'bingo/src/service/service.js';
 
 const COLORS = ['#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#A133FF', '#33FFF3', '#FF8C33', '#8C33FF', '#33A1FF'];
 
-export const BingoContext = createContext();
+export const BingoContext = createContext(); 
 
 export const BingoContextProvider = ({ children }) => {
     const { user } = useContext(UserContext);
@@ -13,7 +13,7 @@ export const BingoContextProvider = ({ children }) => {
     const [bgColor, setBgColor] = useState(COLORS[Math.floor(Math.random() * COLORS.length)]);
     const [drawnNumbers, setDrawnNumbers] = useState([]);
     const [currentNumber, setCurrentNumber] = useState(null);
-    const [markedNumbers, setMarkedNumbers] = useState({}); // Marked numbers will be stored as keys in an object
+    const [markedNumbers, setMarkedNumbers] = useState({});
     const [drawNumberEnabled, setDrawNumberEnabled] = useState(true);
     const [countdown, setCountdown] = useState(6);
     const [isCountingDown, setIsCountingDown] = useState(false);
@@ -29,8 +29,13 @@ export const BingoContextProvider = ({ children }) => {
 
     const [chatMessages, setChatMessages] = useState([]);
 
+    const [isBingoOccurred, setIsBingoOccurred] = useState(false);
+    const [bingoWinnerUsername, setBingoWinnerUsername] = useState('');
+    const [gameScores, setGameScores] = useState({});
+
     const { sendMessage, messages } = useBingoWebSocket();
     const lastProcessedNumberDrawnRef = useRef(null);
+    const lastProcessedBingoRef = useRef(null);
 
     useEffect(() => {
         const loadBingoCard = async () => {
@@ -112,6 +117,22 @@ export const BingoContextProvider = ({ children }) => {
     }, [messages, drawnNumbers]);
 
     useEffect(() => {
+        const bingoMessages = messages.filter(msg => msg.type === 'bingo');
+        const latestBingoMessage = bingoMessages[bingoMessages.length - 1];
+
+        if (
+            latestBingoMessage &&
+            latestBingoMessage !== lastProcessedBingoRef.current
+        ) {
+            setIsBingoOccurred(true);
+            setBingoWinnerUsername(latestBingoMessage.username);
+            setGameScores(latestBingoMessage.scores);
+            lastProcessedBingoRef.current = latestBingoMessage;
+        }
+    }, [messages]);
+
+
+    useEffect(() => {
         const newChatMessagesFromServer = messages.filter(msg =>
             msg.type === 'chat-message-received' &&
             !chatMessages.some(existing => existing.timestamp === msg.timestamp)
@@ -136,13 +157,12 @@ export const BingoContextProvider = ({ children }) => {
     };
 
     const handleCellPress = (num) => {
-        if (drawnNumbers.includes(num)) { 
+        if (drawnNumbers.includes(num)) {
             setMarkedNumbers(prevMarkedNumbers => ({
                 ...prevMarkedNumbers,
                 [num]: true
             }));
             sendMessage({ type: 'mark-number', number: num });
-
         }
     };
 
@@ -194,8 +214,9 @@ export const BingoContextProvider = ({ children }) => {
         }
     }, [chatMessages]);
 
+
     return (
-        <BingoContext.Provider
+        <BingoContext.Provider // Context.Provider name changed to Bingo.Provider
             value={{
                 card,
                 setCard,
@@ -207,7 +228,7 @@ export const BingoContextProvider = ({ children }) => {
                 setDrawnNumbers,
                 currentNumber,
                 setCurrentNumber,
-                markedNumbers, 
+                markedNumbers,
                 setMarkedNumbers,
                 drawNumberEnabled,
                 setDrawNumberEnabled,
@@ -241,7 +262,14 @@ export const BingoContextProvider = ({ children }) => {
                 handleNewMessage,
                 sendChatMessageContext,
                 chatMessages,
-                startCountdown: startCountdown
+                startCountdown: startCountdown,
+
+                isBingoOccurred,
+                setIsBingoOccurred,
+                bingoWinnerUsername,
+                setBingoWinnerUsername,
+                gameScores,
+                setGameScores,
             }}
         >
             {children}

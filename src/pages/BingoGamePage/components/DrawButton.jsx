@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useContext, useState } from 'react';
 import { TouchableOpacity, Text, StyleSheet, Animated, Easing } from 'react-native';
 import { BingoContext } from 'bingo/src/context/BingoGameContext';
-import { useBingoWebSocket } from '../../../../src/context/BingoGameWebsocket.js';
+import { useBingoWebSocket } from '../../../../../../src/context/BingoGameWebsocket.js';
 
 const DrawButton = () => {
   const { bgColor, currentNumber, setCurrentNumber, drawNumber, drawNumberEnabled, isCountingDown, isCooldownActive, cooldownRemaining } = useContext(BingoContext);

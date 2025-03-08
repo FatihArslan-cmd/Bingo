@@ -1,7 +1,7 @@
 import React, { useContext, memo, useCallback } from 'react';
 import { TouchableRipple, Surface, IconButton, Text } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
-import { BingoContext } from '../context/BingoGameContext';
+import { BingoContext } from 'bingo/src/context/BingoGameContext';
 
 const LastMessage = memo(() => {
     const { openMessageModal, lastMessage } = useContext(BingoContext);

@@ -2,9 +2,9 @@ import React , {  useState, useCallback } from 'react'; // useCallback import ed
 import { StyleSheet, View } from 'react-native';
 import { TouchableRipple } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import CustomModal from '../../../../src/components/CustomModal';
-import api from '../../../../src/shared/states/api';
-import { getToken } from '../../../../src/shared/states/api';
+import CustomModal from '../../../../../../src/components/CustomModal';
+import api from '../../../../../../src/shared/states/api';
+import { getToken } from '../../../../../../src/shared/states/api';
 import { useNavigation } from '@react-navigation/native';
 
 const LogoutButton = () => {

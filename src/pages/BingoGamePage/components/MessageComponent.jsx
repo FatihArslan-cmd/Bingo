@@ -31,7 +31,7 @@ const MessageComponent = memo(() => { // 1. Memoize the entire MessageComponent
             <View style={styles.messageContainer}>
                 <Image
                     style={styles.profileImage}
-                    source={item.profilePhoto ? { uri: item.profilePhoto } : require('../../../../src/locales/gameImages/adventureQuestImage.jpg')}
+                    source={item.profilePhoto}
                 />
                 <Card style={styles.messageCard}>
                     <View style={styles.messageContentContainer}>

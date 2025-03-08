@@ -1,6 +1,6 @@
 import React, { useContext, memo } from 'react';
 import { View, StyleSheet } from 'react-native';
-import NumberCell from './NumberCell'; // Eğer NumberCell ayrı bir dosya ise
+import NumberCell from 'bingo/src/pages/BingoGamePage/components/NumberCell'; // Eğer NumberCell ayrı bir dosya ise
 import { BingoContext } from 'bingo/src/context/BingoGameContext';
 
 const BingoCard = memo(() => {
