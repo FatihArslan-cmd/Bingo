@@ -1,16 +1,15 @@
 import React, { createContext, useState, useEffect, useCallback, useRef, useContext } from 'react';
 import { useBingoWebSocket } from '../../../../src/context/BingoGameWebsocket.js';
 import { UserContext } from '../../../../src/context/UserContext.jsx';
-import getUserBingoCard from 'bingo/src/service/service.js';
+import getUserBingoCardData from 'bingo/src/service/service.js'; // Updated import to getUserBingoCardData
 
-const COLORS = ['#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#A133FF', '#33FFF3', '#FF8C33', '#8C33FF', '#33A1FF'];
 
-export const BingoContext = createContext(); 
+export const BingoContext = createContext();
 
 export const BingoContextProvider = ({ children }) => {
     const { user } = useContext(UserContext);
     const [card, setCard] = useState([]);
-    const [bgColor, setBgColor] = useState(COLORS[Math.floor(Math.random() * COLORS.length)]);
+    const [bgColor, setBgColor] = useState(''); // Initialize bgColor as empty string
     const [drawnNumbers, setDrawnNumbers] = useState([]);
     const [currentNumber, setCurrentNumber] = useState(null);
     const [markedNumbers, setMarkedNumbers] = useState({});
@@ -46,13 +45,14 @@ export const BingoContextProvider = ({ children }) => {
 
             try {
                 setIsCardLoading(true);
-                const apiCard = await getUserBingoCard(user.username);
+                const { bingoCard, cardColor } = await getUserBingoCardData(user.username); // Call getUserBingoCardData to get card and color
 
-                if (validateBingoCard(apiCard)) {
-                    setCard(apiCard);
+                if (validateBingoCard(bingoCard)) {
+                    setCard(bingoCard);
+                    setBgColor(cardColor); // Set bgColor from API response
                     setCardError(null);
                 } else {
-                    console.error('Geçersiz bingo kartı formatı:', apiCard);
+                    console.error('Geçersiz bingo kartı formatı:', bingoCard);
                     setCardError('Geçersiz bingo kartı formatı');
                 }
             } catch (error) {
@@ -216,13 +216,13 @@ export const BingoContextProvider = ({ children }) => {
 
 
     return (
-        <BingoContext.Provider // Context.Provider name changed to Bingo.Provider
+        <BingoContext.Provider
             value={{
                 card,
                 setCard,
                 isCardLoading,
                 cardError,
-                bgColor,
+                bgColor, // bgColor is now from API
                 setBgColor,
                 drawnNumbers,
                 setDrawnNumbers,
