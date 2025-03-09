@@ -12,16 +12,15 @@ import EmojiPanel from 'bingo/src/pages/BingoGamePage/components/EmojiPanel';
 import AnimatedEmoji from 'bingo/src/pages/BingoGamePage/components/AnimatedEmoji';
 import MessageComponent from 'bingo/src/pages/BingoGamePage/components/MessageComponent';
 import LastMessage from 'bingo/src/pages/BingoGamePage/components/LastMessage';
-
+import { ChinkoMessage } from 'bingo/src/pages/BingoGamePage/components/ChinkoMessage';
 const BingoGamePage = () => {
     useDisableBackButton();
 
     return (
-        <SafeAreaView style={styles.safeAreaContainer}> {/* Ana View SafeAreaView ile değiştirildi */}
+        <SafeAreaView style={styles.safeAreaContainer}> 
             <StatusBar barStyle="transparent"/>
-
+            <ChinkoMessage/>
             <LastMessage/>
-
             <View style={styles.header}>
                 <View style={styles.userPanelContainer}>
                     <UserListPanel />

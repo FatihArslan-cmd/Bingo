@@ -7,7 +7,7 @@ import styles from 'bingo/src/pages/BingoResultScreen/styles/styles';
 import WinnerCard from 'bingo/src/pages/BingoResultScreen/components/WinnerCard';
 import ScoresCard from 'bingo/src/pages/BingoResultScreen/components/ScoresCard';
 import ActionButtons from 'bingo/src/pages/BingoResultScreen/components/ActionButtons';
-import LogoutButton from 'bingo/src/components/LogoutButton';
+import LogoutButton from 'bingo/src/pages/BingoGamePage/components/LogoutButton';
 import LottieView from 'lottie-react-native'; // LottieView import edildi
 
 const BingoResultScreen = () => {

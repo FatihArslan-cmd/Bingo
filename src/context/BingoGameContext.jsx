@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, useCallback, useRef, useContext } from 'react';
 import { useBingoWebSocket } from '../../../../src/context/BingoGameWebsocket.js';
 import { UserContext } from '../../../../src/context/UserContext.jsx';
-import getUserBingoCardData from 'bingo/src/service/service.js'; // Updated import to getUserBingoCardData
+import getUserBingoCardData from 'bingo/src/service/service.js'; 
 
 
 export const BingoContext = createContext();
@@ -9,7 +9,7 @@ export const BingoContext = createContext();
 export const BingoContextProvider = ({ children }) => {
     const { user } = useContext(UserContext);
     const [card, setCard] = useState([]);
-    const [bgColor, setBgColor] = useState(''); // Initialize bgColor as empty string
+    const [bgColor, setBgColor] = useState(''); 
     const [drawnNumbers, setDrawnNumbers] = useState([]);
     const [currentNumber, setCurrentNumber] = useState(null);
     const [markedNumbers, setMarkedNumbers] = useState({});
@@ -45,16 +45,12 @@ export const BingoContextProvider = ({ children }) => {
 
             try {
                 setIsCardLoading(true);
-                const { bingoCard, cardColor } = await getUserBingoCardData(user.username); // Call getUserBingoCardData to get card and color
+                const { bingoCard, cardColor } = await getUserBingoCardData(user.username);
 
-                if (validateBingoCard(bingoCard)) {
-                    setCard(bingoCard);
-                    setBgColor(cardColor); // Set bgColor from API response
-                    setCardError(null);
-                } else {
-                    console.error('Geçersiz bingo kartı formatı:', bingoCard);
-                    setCardError('Geçersiz bingo kartı formatı');
-                }
+                setCard(bingoCard);
+                setBgColor(cardColor); 
+                setCardError(null);
+
             } catch (error) {
                 console.error('Bingo kartı yüklenemedi:', error);
                 setCardError('Bingo kartı yüklenemedi. Lütfen tekrar deneyin.');
@@ -66,17 +62,6 @@ export const BingoContextProvider = ({ children }) => {
         loadBingoCard();
     }, [user?.username]);
 
-    const validateBingoCard = (card) => {
-        return (
-            Array.isArray(card) &&
-            card.length === 3 &&
-            card.every(row =>
-                Array.isArray(row) &&
-                row.length === 9 &&
-                row.every(num => num === null || (typeof num === 'number' && num >= 1 && num <= 90))
-            )
-        );
-    };
 
     useEffect(() => {
         let intervalId;
@@ -131,7 +116,7 @@ export const BingoContextProvider = ({ children }) => {
         }
     }, [messages]);
 
-
+ 
     useEffect(() => {
         const newChatMessagesFromServer = messages.filter(msg =>
             msg.type === 'chat-message-received' &&
@@ -222,7 +207,7 @@ export const BingoContextProvider = ({ children }) => {
                 setCard,
                 isCardLoading,
                 cardError,
-                bgColor, // bgColor is now from API
+                bgColor,
                 setBgColor,
                 drawnNumbers,
                 setDrawnNumbers,

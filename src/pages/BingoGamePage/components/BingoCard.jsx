@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         borderWidth: 4,
         transform: [{ scale: 1.2 }],
-        marginTop: 10,
+        marginVertical :25,
     },
     row: {
         flexDirection: 'row',

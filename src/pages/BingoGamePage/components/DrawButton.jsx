@@ -21,20 +21,16 @@ const DrawButton = () => {
 
   useEffect(() => {
     if (drawnNumberMessage) {
-      setCurrentNumber(drawnNumberMessage.number);
-      setIsNumberAnimatedUp(false);
+      const newNumber = drawnNumberMessage.number;
+      if (numberRef.current !== newNumber) {
+        setCurrentNumber(newNumber);
+        numberRef.current = newNumber; // Update ref immediately before animation
+        setIsNumberAnimatedUp(false); // Reset animation state to allow up animation
+        animateNumberChangeUp(); // Start animation right after setting the number
+      }
     }
   }, [drawnNumberMessage, setCurrentNumber]);
 
-  useEffect(() => {
-    if (currentNumber === null || isNumberAnimatedUp) return;
-
-    if (numberRef.current !== currentNumber) {
-      animateNumberChangeUp();
-    }
-
-    numberRef.current = currentNumber;
-  }, [currentNumber, drawNumberEnabled, isNumberAnimatedUp]);
 
   useEffect(() => {
     if (!isCountingDown && isNumberAnimatedUp) {
@@ -74,7 +70,7 @@ const DrawButton = () => {
   });
   const scale = animatedValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [1, 2.50],
+    outputRange: [1, 2.60],
   });
 
   return (
@@ -83,16 +79,10 @@ const DrawButton = () => {
       style={[styles.circle, { borderColor: bgColor },]}
       disabled={!drawNumberEnabled || isCooldownActive}
     >
-      {isCooldownActive ? (
-          <Text style={styles.cooldownText}>
-              Wait {cooldownRemaining}s
-          </Text>
-      ) : (
-          currentNumber !== null && (
-              <Animated.View style={{ transform: [{ translateY }, { scale }] }}>
-                  <Text style={styles.drawnNumberText}>{currentNumber}</Text>
-              </Animated.View>
-          )
+      {currentNumber !== null && (
+          <Animated.View style={{ transform: [{ translateY }, { scale }] }}>
+              <Text style={styles.drawnNumberText}>{currentNumber}</Text>
+          </Animated.View>
       )}
     </TouchableOpacity>
   );

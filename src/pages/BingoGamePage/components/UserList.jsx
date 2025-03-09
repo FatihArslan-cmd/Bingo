@@ -58,7 +58,7 @@ const UserListPanel = () => {
             >
                 <View style={styles.headerContent}>
                     <Icon name="people" size={24} color="#2196F3" />
-                    <Text style={styles.headerText}>Users</Text>
+                    <Text style={styles.headerText}>Players</Text>
                     <Animated.View style={{ transform: [{ rotate }] }}>
                         <Icon name="expand-more" size={24} color="#2196F3" />
                     </Animated.View>

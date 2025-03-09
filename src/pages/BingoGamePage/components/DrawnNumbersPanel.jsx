@@ -41,7 +41,7 @@ const DrawnNumbersPanel = () => {
               onContentSizeChange={() => scrollToEnd()}
            >
              {drawnNumbers.map((number, index) => (
-               <NumberBox key={index} number={number} /> // Use the memoized NumberBox
+               <NumberBox key={index} number={number} />
              ))}
            </ScrollView>
         </View>
