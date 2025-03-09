@@ -13,6 +13,7 @@ import AnimatedEmoji from 'bingo/src/pages/BingoGamePage/components/AnimatedEmoj
 import MessageComponent from 'bingo/src/pages/BingoGamePage/components/MessageComponent';
 import LastMessage from 'bingo/src/pages/BingoGamePage/components/LastMessage';
 import { ChinkoMessage } from 'bingo/src/pages/BingoGamePage/components/ChinkoMessage';
+
 const BingoGamePage = () => {
     useDisableBackButton();
 

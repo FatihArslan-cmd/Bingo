@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { BingoContext } from 'bingo/src/context/BingoGameContext';
+import TouchableRipple from 'react-native-paper';
 
 const EmojiButton = () => {
   const { handleEmojiButtonPress } = useContext(BingoContext);

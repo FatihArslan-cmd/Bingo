@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useContext, useRef, memo } from 'react';
-import { StyleSheet, FlatList, TouchableOpacity, Dimensions, View, Image } from 'react-native';
+import { StyleSheet, FlatList, Dimensions, View, Image } from 'react-native';
 import {
     Modal,
     Portal,
@@ -7,7 +7,8 @@ import {
     Surface,
     TextInput,
     Card,
-    IconButton
+    IconButton,
+    TouchableRipple
 } from 'react-native-paper';
 import { BlurView } from '@react-native-community/blur';
 import { BingoContext } from 'bingo/src/context/BingoGameContext';
@@ -106,7 +107,7 @@ const MessageComponent = memo(() => { // 1. Memoize the entire MessageComponent
                             contentStyle={styles.messageInputContent}
                             placeholderTextAlign="center"
                         />
-                        <TouchableOpacity
+                        <TouchableRipple
                             onPress={sendMessage}
                             disabled={!currentMessage.trim()}
                             style={[
@@ -119,7 +120,7 @@ const MessageComponent = memo(() => { // 1. Memoize the entire MessageComponent
                                 iconColor={!currentMessage.trim() ? '#999' : 'white'}
                                 size={24}
                             />
-                        </TouchableOpacity>
+                        </TouchableRipple>
                     </View>
                 </Surface>
             </Modal>
