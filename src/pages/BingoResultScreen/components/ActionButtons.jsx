@@ -19,7 +19,7 @@ const ActionButtons = () => {
             <TouchableRipple style={styles.playAgainButton} onPress={handlePlayAgain}>
                 <View style={styles.buttonContent}>
                     <Icon name="reload" size={24} color="#fff" />
-                    <Text style={styles.buttonText}>Yeniden Oyna</Text>
+                    <Text style={styles.buttonText}>Start a new round</Text>
                 </View>
             </TouchableRipple>
         </View>

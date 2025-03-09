@@ -7,8 +7,12 @@ const styles = StyleSheet.create({
     resultScreenContainer: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: 'space-between', // Değiştirildi: space-between
         padding: 20,
+    },
+    winnerCardStyle: {
+        marginTop: '10%',
+        marginBottom: 20,
     },
     winnerCard: {
         width: '100%',
@@ -45,6 +49,9 @@ const styles = StyleSheet.create({
         color: 'white',
         fontFamily: 'Orbitron-ExtraBold',
         marginLeft: 5,
+    },
+    scoresCardStyle: {
+        marginBottom: 30,
     },
     scoresCard: {
         width: '100%',
@@ -83,7 +90,7 @@ const styles = StyleSheet.create({
     playerName: {
         flex: 1,
         fontSize: 16,
-        fontWeight: '500',
+        fontFamily: 'Orbitron-ExtraBold',
     },
     playerScore: {
         fontSize: 16,
@@ -91,17 +98,19 @@ const styles = StyleSheet.create({
         color: '#2575fc',
     },
     buttonsContainer: {
-        width: '100%',
-        marginTop: 10,
+        width: '80%',
+        marginBottom: 20, // Sayfanın en altında boşluk
+        // marginTop: 'auto', // Kaldırıldı
+        marginTop: 0, // Kaldırıldı
     },
     logoutButtonContainer: {
-        position: 'absolute', // Mutlak konumlandırma
-        top: 10,      // Üstten boşluk (SafeAreaView içinde olduğundan güvenli alan dikkate alınır)
-        right: 10,    // Sağdan boşluk
-        zIndex: 10,   // Diğer içeriklerin üzerinde görünmesi için
+        position: 'absolute',
+        top: 10,
+        right: 10,
+        zIndex: 10,
     },
     playAgainButton: {
-        backgroundColor: '#2575fc',
+        backgroundColor: '#6a11cb',
         borderRadius: 10,
         padding: 12,
         marginBottom: 10,
@@ -125,6 +134,12 @@ const styles = StyleSheet.create({
         fontFamily: 'Orbitron-ExtraBold',
         marginLeft: 10,
         textAlign: 'center',
+    },
+    lottieAnimation: { // Lottie animation için stil
+        width: 400,  // Genişlik ayarlanabilir
+        height: 400, // Yükseklik ayarlanabilir
+        marginBottom: 20,
+        marginTop: 10,
     },
 });
 
