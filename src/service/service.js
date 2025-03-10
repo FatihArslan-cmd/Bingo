@@ -4,7 +4,7 @@ import { getToken } from "../../../../src/shared/states/api";
 const getUserBingoCard = async (username) => {
     if (!username) {
         console.error("Kullanıcı adı bulunamadı.");
-        return { bingoCard: null, cardColor: null }; // Return an object with null values if username is missing
+        return { bingoCard: null, cardColor: null, membersInfo: null };
     }
 
     try {
@@ -15,24 +15,37 @@ const getUserBingoCard = async (username) => {
 
         if (response.data?.lobby) {
             const lobby = response.data.lobby;
+            let membersInfo = null;
 
-            if (lobby.bingoCards && lobby.cardColors) { // Check if both bingoCards and cardColors exist in the lobby data
+            if (lobby.members && Array.isArray(lobby.members)) {
+                membersInfo = lobby.members.map(member => ({
+                    username: member.username,
+                    profilePhoto: member.profilePhoto,
+                    userId: member.id,
+                }));
+            } else {
+                console.warn("API'da members verisi bulunamadı veya beklenen formatta değil.");
+                membersInfo = null; 
+            }
+
+
+            if (lobby.bingoCards && lobby.cardColors) {
                 const userBingoCard = lobby.bingoCards[username];
-                const userCardColor = lobby.cardColors[username]; // Get the card color for the user
+                const userCardColor = lobby.cardColors[username];
 
                 if (userBingoCard) {
-                    return { bingoCard: userBingoCard, cardColor: userCardColor }; // Return both bingoCard and cardColor as an object
+                    return { bingoCard: userBingoCard, cardColor: userCardColor, membersInfo: membersInfo };
                 } else {
                     console.warn(`${username} için bingo kartı bulunamadı.`);
-                    return { bingoCard: null, cardColor: null }; // Return null for both if bingoCard is not found
+                    return { bingoCard: null, cardColor: null, membersInfo: membersInfo };
                 }
             } else {
                 console.warn("API'da bingoCards veya cardColors verisi yok.");
-                return { bingoCard: null, cardColor: null }; // Return null for both if bingoCards or cardColors is missing in lobby data
+                return { bingoCard: null, cardColor: null, membersInfo: membersInfo };
             }
         } else {
             console.warn("API'da lobby verisi yok.");
-            return { bingoCard: null, cardColor: null }; // Return null for both if lobby data is missing
+            return { bingoCard: null, cardColor: null, membersInfo: null }; 
         }
     } catch (error) {
         console.error("Bingo kartı alınamadı:", error);

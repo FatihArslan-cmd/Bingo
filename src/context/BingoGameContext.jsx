@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, useCallback, useRef, useContext } from 'react';
 import { useBingoWebSocket } from '../../../../src/context/BingoGameWebsocket.js';
 import { UserContext } from '../../../../src/context/UserContext.jsx';
-import getUserBingoCardData from 'bingo/src/service/service.js'; 
+import getUserBingoCardData from 'bingo/src/service/service.js';
 
 
 export const BingoContext = createContext();
@@ -9,7 +9,7 @@ export const BingoContext = createContext();
 export const BingoContextProvider = ({ children }) => {
     const { user } = useContext(UserContext);
     const [card, setCard] = useState([]);
-    const [bgColor, setBgColor] = useState(''); 
+    const [bgColor, setBgColor] = useState('');
     const [drawnNumbers, setDrawnNumbers] = useState([]);
     const [currentNumber, setCurrentNumber] = useState(null);
     const [markedNumbers, setMarkedNumbers] = useState({});
@@ -32,6 +32,8 @@ export const BingoContextProvider = ({ children }) => {
     const [bingoWinnerUsername, setBingoWinnerUsername] = useState('');
     const [gameScores, setGameScores] = useState({});
 
+    const [membersInfo, setMembersInfo] = useState(null); // New state for members info
+
     const { sendMessage, messages } = useBingoWebSocket();
     const lastProcessedNumberDrawnRef = useRef(null);
     const lastProcessedBingoRef = useRef(null);
@@ -45,10 +47,11 @@ export const BingoContextProvider = ({ children }) => {
 
             try {
                 setIsCardLoading(true);
-                const { bingoCard, cardColor } = await getUserBingoCardData(user.username);
+                const { bingoCard, cardColor, membersInfo: fetchedMembersInfo } = await getUserBingoCardData(user.username); // Destructure membersInfo from the return
 
                 setCard(bingoCard);
-                setBgColor(cardColor); 
+                setBgColor(cardColor);
+                setMembersInfo(fetchedMembersInfo); // Set the members info state
                 setCardError(null);
 
             } catch (error) {
@@ -116,7 +119,7 @@ export const BingoContextProvider = ({ children }) => {
         }
     }, [messages]);
 
- 
+
     useEffect(() => {
         const newChatMessagesFromServer = messages.filter(msg =>
             msg.type === 'chat-message-received' &&
@@ -255,6 +258,9 @@ export const BingoContextProvider = ({ children }) => {
                 setBingoWinnerUsername,
                 gameScores,
                 setGameScores,
+
+                membersInfo, // Expose membersInfo in the context
+                setMembersInfo, // Optionally expose the setter as well if needed
             }}
         >
             {children}
