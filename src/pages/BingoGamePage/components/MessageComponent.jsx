@@ -15,7 +15,7 @@ import { BingoContext } from 'bingo/src/context/BingoGameContext';
 
 const { height } = Dimensions.get('window');
 
-const MessageComponent = memo(() => { // 1. Memoize the entire MessageComponent
+const MessageComponent = memo(() => { 
     const { isMessageModalVisible, closeMessageModal, chatMessages, sendChatMessageContext } = useContext(BingoContext);
     const [currentMessage, setCurrentMessage] = useState('');
     const flatListRef = useRef(null);
@@ -126,7 +126,7 @@ const MessageComponent = memo(() => { // 1. Memoize the entire MessageComponent
             </Modal>
         </Portal>
     );
-}); // Close memo HOC
+});
 
 const styles = StyleSheet.create({
     absolute: {
@@ -166,13 +166,13 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         flexGrow: 1,
         justifyContent: 'flex-start',
-        alignItems: 'stretch', // Ensure messages stretch to container width
+        alignItems: 'stretch', 
     },
     messageContainer: {
         flexDirection: 'row',
         alignItems: 'flex-start',
         marginVertical: 10,
-        width: '100%', // Take full width of the FlatList item
+        width: '100%', 
     },
     profileImage: {
         width: 40,
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     messageCard: {
-        flex: 1, // Allow message card to grow and take available space
+        flex: 1, 
         borderRadius: 25,
         padding: 10,
     },

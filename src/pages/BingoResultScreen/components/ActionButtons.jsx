@@ -3,7 +3,7 @@ import { View  } from 'react-native';
 import { Text ,TouchableRipple} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import styles from 'bingo/src/pages/BingoResultScreen/styles/styles';
-import lobbyService from '../../../../../../src/pages/HomeScreen/components/GameDetails/service/service';
+import lobbyService from '../../../../../../../GameCenter/src/pages/GameDetails/service/service.js';
 
 const ActionButtons = () => {
     const handlePlayAgain = async () => {

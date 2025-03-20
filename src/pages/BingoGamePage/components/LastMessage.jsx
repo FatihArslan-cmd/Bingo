@@ -2,10 +2,11 @@ import React, { useContext, memo, useCallback } from 'react';
 import { TouchableRipple, Surface, IconButton, Text } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 import { BingoContext } from 'bingo/src/context/BingoGameContext';
+import { useTheme } from '../../../../../../src/context/ThemeContext';
 
 const LastMessage = memo(() => {
     const { openMessageModal, lastMessage } = useContext(BingoContext);
-
+    const { colors } = useTheme();
     const handlePress = useCallback(() => {
         openMessageModal();
     }, [openMessageModal]);
@@ -17,15 +18,18 @@ const LastMessage = memo(() => {
             style={styles.messageTouchable}
         >
             <View style={styles.messageContainer}>
-                <Surface style={styles.messagePreview}>
-                    <Text numberOfLines={1} style={styles.lastMessageText}>
-                        {lastMessage || 'No messages yet'}
-                    </Text>
+                <Surface style={[styles.messagePreview, { backgroundColor: colors.card }]}>
+                    <View style={styles.textBackground}> 
+                        <Text numberOfLines={1} style={[styles.lastMessageText, { color: colors.text }]}>
+                            {lastMessage || 'No messages yet'}
+                        </Text>
+                    </View>
                 </Surface>
                 <IconButton
                     icon="message-text-outline"
+                    iconColor={colors.text}
                     size={24}
-                    style={styles.messageIcon}
+                    style={[styles.messageIcon, { backgroundColor: colors.card }]}
                 />
             </View>
         </TouchableRipple>
@@ -52,6 +56,13 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         marginRight: 10,
         maxWidth: 200,
+        overflow: 'hidden', 
+    },
+    textBackground: {
+        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+        borderRadius: 5, 
+        paddingHorizontal: 10, 
+        paddingVertical: 6,
     },
     lastMessageText: {
         color: '#333',

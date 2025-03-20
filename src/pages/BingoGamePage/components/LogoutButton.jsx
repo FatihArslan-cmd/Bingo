@@ -6,9 +6,9 @@ import CustomModal from '../../../../../../src/components/CustomModal';
 import api from '../../../../../../src/shared/states/api';
 import { getToken } from '../../../../../../src/shared/states/api';
 import { useNavigation } from '@react-navigation/native';
-
+import { useTheme } from '../../../../../../src/context/ThemeContext';
 const LogoutButton = () => {
-
+  const { colors } = useTheme();
   const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
   const navigation = useNavigation();
 
@@ -47,7 +47,7 @@ const LogoutButton = () => {
     <>
       <TouchableRipple style={styles.logoutButton} onPress={handleLogoutConfirmation}>
         <View style={styles.iconContainer}>
-          <Icon name="logout" size={24} color="#333" />
+          <Icon name="logout" size={24} color={colors.text} />
         </View>
       </TouchableRipple>
 

@@ -1,17 +1,15 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { View, StatusBar } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'react-native-linear-gradient';
-import { BingoContext } from 'bingo/src/context/BingoGameContext';
 import styles from 'bingo/src/pages/BingoResultScreen/styles/styles';
 import WinnerCard from 'bingo/src/pages/BingoResultScreen/components/WinnerCard';
 import ScoresCard from 'bingo/src/pages/BingoResultScreen/components/ScoresCard';
 import ActionButtons from 'bingo/src/pages/BingoResultScreen/components/ActionButtons';
 import LogoutButton from 'bingo/src/pages/BingoGamePage/components/LogoutButton';
-import LottieView from 'lottie-react-native'; // LottieView import edildi
+import LottieView from 'lottie-react-native'; 
 
 const BingoResultScreen = () => {
-    const { bingoWinnerUsername, gameScores } = useContext(BingoContext);
 
     return (
         <SafeAreaProvider>
@@ -29,8 +27,8 @@ const BingoResultScreen = () => {
                         <View style={styles.logoutButtonContainer}>
                             <LogoutButton />
                         </View>
-                        <WinnerCard bingoWinnerUsername={bingoWinnerUsername} gameScores={gameScores} style={styles.winnerCardStyle}/>
-                        <ScoresCard gameScores={gameScores} style={styles.scoresCardStyle}/>
+                        <WinnerCard style={styles.winnerCardStyle}/>
+                        <ScoresCard style={styles.scoresCardStyle}/>
                         <LottieView
                             source={require('../../../assets/GameResult.json')} 
                             autoPlay

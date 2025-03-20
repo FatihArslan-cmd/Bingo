@@ -8,20 +8,21 @@ import {
   Divider,
   Badge,
   IconButton,
-  useTheme,
   TouchableRipple
 } from 'react-native-paper';
 import { BingoContext } from 'bingo/src/context/BingoGameContext';
 import { useBingoWebSocket } from '../../../../../../src/context/BingoGameWebsocket.js';
+import { useTheme } from '../../../../../../src/context/ThemeContext.jsx';
 
 const UserListPanel = () => {
-  const { membersInfo, bgColor } = useContext(BingoContext);
+  const { membersInfo } = useContext(BingoContext);
   const [isExpanded, setIsExpanded] = useState(false);
   const animation = useRef(new Animated.Value(0)).current;
-  const theme = useTheme();
+  const { colors } = useTheme(); // Get colors from your custom theme
   const maxListHeight = useRef(new Animated.Value(0)).current;
   const { messages } = useBingoWebSocket();
   const [users, setUsers] = useState([]);
+  const primaryNavigationColor = colors.navigationFill; // Use navigationFill from theme for primary color
 
   useEffect(() => {
     Animated.timing(animation, {
@@ -132,11 +133,11 @@ const UserListPanel = () => {
   const renderUserItem = ({ item }) => (
     <TouchableRipple
       onPress={() => console.log(`Tapped on ${item.name}`)}
-      rippleColor={theme.colors.ripple}
+      rippleColor={colors.ripple} // Use themed ripple color
     >
       <List.Item
         title={item.name}
-        titleStyle={styles.userName}
+        titleStyle={[styles.userName, { color: colors.text }]} // Themed username text color
         left={() => (
           <View style={styles.avatarContainer}>
             {item.profilePhoto ? (
@@ -145,7 +146,8 @@ const UserListPanel = () => {
               <Avatar.Text
                 size={40}
                 label={item.name.substring(0, 2).toUpperCase()}
-                backgroundColor={item.isOnline ? theme.colors.primary : theme.colors.surfaceDisabled}
+                backgroundColor={item.isOnline ? colors.primary : colors.border} // Themed avatar background
+                color={colors.card} // Avatar text color
               />
             )}
             <Badge
@@ -161,13 +163,13 @@ const UserListPanel = () => {
         right={() => (
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
-              <Text style={styles.statLabel}>Bingo</Text>
-              <Text style={styles.statValue}>{item.score}</Text>
+              <Text style={[styles.statLabel, { color: colors.subText }]}>Bingo</Text> {/* Themed stat label color */}
+              <Text style={[styles.statValue, { color: colors.text }]}>{item.score}</Text> {/* Themed stat value color */}
             </View>
-            <Divider style={styles.verticalDivider} />
+            <Divider style={{ ...styles.verticalDivider, backgroundColor: colors.border }} /> {/* Themed divider color */}
             <View style={styles.statItem}>
-              <Text style={styles.statLabel}>Cinko</Text>
-              <Text style={styles.statValue}>{item.cinko}</Text>
+              <Text style={[styles.statLabel, { color: colors.subText }]}>Cinko</Text> {/* Themed stat label color */}
+              <Text style={[styles.statValue, { color: colors.text }]}>{item.cinko}</Text> {/* Themed stat value color */}
             </View>
           </View>
         )}
@@ -176,15 +178,17 @@ const UserListPanel = () => {
   );
 
   return (
-    <Surface style={styles.container} elevation={2}>
-      <TouchableRipple onPress={toggleExpand} rippleColor={theme.colors.ripple}>
+    <Surface style={[styles.container, { backgroundColor: colors.background }]} elevation={2}> {/* Themed Surface background */}
+      <TouchableRipple onPress={toggleExpand}
+        rippleColor={colors.ripple} // Themed ripple color
+      >
         <View style={styles.headerContainer}>
           <View style={styles.headerContent}>
-            <IconButton icon="account-group" size={24} iconColor={theme.colors.primary} />
-            <Text variant="titleLarge" style={{ color: theme.colors.primary }}>Players</Text>
+            <IconButton icon="account-group" size={24} iconColor={primaryNavigationColor} /> {/* Fixed icon color */}
+            <Text variant="titleLarge" style={[styles.playerText, { color: primaryNavigationColor }]}>Players</Text> {/* Fixed "Players" text color */}
           </View>
           <Animated.View style={{ transform: [{ rotate }] }}>
-            <IconButton icon="chevron-down" size={24} iconColor={theme.colors.primary} />
+            <IconButton icon="chevron-down" size={24} iconColor={primaryNavigationColor} /> {/* Fixed icon color */}
           </Animated.View>
         </View>
       </TouchableRipple>
@@ -202,7 +206,7 @@ const UserListPanel = () => {
           data={displayedUsers}
           keyExtractor={(item) => item.username || item.userId.toString()}
           renderItem={renderUserItem}
-          ItemSeparatorComponent={() => <Divider />}
+          ItemSeparatorComponent={() => <Divider style={{ backgroundColor: colors.border }} />} // Themed divider color
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.listContent}
         />
@@ -267,6 +271,9 @@ const styles = StyleSheet.create({
     height: 24,
     width: 1,
   },
+  playerText: {
+    fontWeight: 'bold',
+  }
 });
 
 export default UserListPanel;

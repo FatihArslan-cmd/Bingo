@@ -13,12 +13,14 @@ import AnimatedEmoji from 'bingo/src/pages/BingoGamePage/components/AnimatedEmoj
 import MessageComponent from 'bingo/src/pages/BingoGamePage/components/MessageComponent';
 import LastMessage from 'bingo/src/pages/BingoGamePage/components/LastMessage';
 import { ChinkoMessage } from 'bingo/src/pages/BingoGamePage/components/ChinkoMessage';
+import { useTheme } from '../../../../../src/context/ThemeContext';
 
 const BingoGamePage = () => {
     useDisableBackButton();
+    const { colors } = useTheme();
 
     return (
-        <SafeAreaView style={styles.safeAreaContainer}> 
+        <SafeAreaView style={[styles.safeAreaContainer, { backgroundColor: colors.background }]}> {/* Apply background color from theme */}
             <StatusBar barStyle="transparent"/>
             <ChinkoMessage/>
             <LastMessage/>
@@ -51,9 +53,8 @@ const BingoGamePage = () => {
 };
 
 const styles = StyleSheet.create({
-    safeAreaContainer: { 
+    safeAreaContainer: {
         flex: 1,
-        backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
     },

@@ -2,12 +2,12 @@ import React, { useContext } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import { BingoContext } from 'bingo/src/context/BingoGameContext';
 import Icon from 'react-native-vector-icons/Ionicons'; // Import Icon
-
+import { useTheme } from '../../../../../../src/context/ThemeContext';
 const screenWidth = Dimensions.get('window').width;
 
 const EmojiPanel = () => {
   const { emojis, handleEmojiSelectContext, isEmojiPanelVisible, closeEmojiPanel, displayEmojis, toggleDisplayEmojis } = useContext(BingoContext);
-
+  const { colors } = useTheme();
   if (!isEmojiPanelVisible) {
     return null;
   }
@@ -22,7 +22,7 @@ const EmojiPanel = () => {
     <TouchableWithoutFeedback onPress={closeEmojiPanel}>
       <View style={styles.panelOverlay}>
         <TouchableWithoutFeedback onPress={() => { /* Prevent clicks inside panel from closing overlay */ }}>
-          <View style={styles.panel}>
+          <View style={[styles.panel, { backgroundColor: colors.card }]}>
             <TouchableOpacity
               style={styles.toggleButton}
               onPress={toggleDisplayEmojis}
@@ -30,7 +30,7 @@ const EmojiPanel = () => {
               <Icon
                 name={displayEmojis ? "eye-outline" : "eye-off-outline"}
                 size={24}
-                color="#333"
+                color={colors.text}
               />
             </TouchableOpacity>
             <View style={styles.emojiContainer}>
@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.3)',
     justifyContent: 'flex-end',
     alignItems: 'center',
+    zIndex: 1000,
   },
   panel: {
     backgroundColor: '#fff',

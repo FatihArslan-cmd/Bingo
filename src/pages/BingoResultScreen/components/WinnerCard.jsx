@@ -2,8 +2,10 @@ import React from 'react';
 import { Text, Avatar, Card, Badge } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import styles from 'bingo/src/pages/BingoResultScreen/styles/styles';
+import BingoContext from 'bingo/src/context/BingoGameContext';
+const WinnerCard = () => {
+    const { bingoWinnerUsername } = useContext(BingoContext);
 
-const WinnerCard = ({ bingoWinnerUsername, gameScores }) => {
     return (
         <Card style={styles.winnerCard}>
             <Card.Content style={styles.winnerCardContent}>

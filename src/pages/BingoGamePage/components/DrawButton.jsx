@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useContext, useState } from 'react';
 import { TouchableOpacity, Text, StyleSheet, Animated, Easing } from 'react-native';
 import { BingoContext } from 'bingo/src/context/BingoGameContext';
 import { useBingoWebSocket } from '../../../../../../src/context/BingoGameWebsocket.js';
+import { useTheme } from '../../../../../../src/context/ThemeContext.jsx';
 
 const DrawButton = () => {
   const { bgColor, currentNumber, setCurrentNumber, drawNumber, drawNumberEnabled, isCountingDown, isCooldownActive, cooldownRemaining } = useContext(BingoContext);
@@ -10,6 +11,7 @@ const DrawButton = () => {
   const { messages } = useBingoWebSocket();
   const [drawnNumberMessage, setDrawnNumberMessage] = useState(null);
   const [isNumberAnimatedUp, setIsNumberAnimatedUp] = useState(false);
+  const { colors } = useTheme();
 
   useEffect(() => {
     const numberDrawnMessages = messages.filter(msg => msg.type === 'number-drawn');
@@ -24,9 +26,9 @@ const DrawButton = () => {
       const newNumber = drawnNumberMessage.number;
       if (numberRef.current !== newNumber) {
         setCurrentNumber(newNumber);
-        numberRef.current = newNumber; // Update ref immediately before animation
-        setIsNumberAnimatedUp(false); // Reset animation state to allow up animation
-        animateNumberChangeUp(); // Start animation right after setting the number
+        numberRef.current = newNumber; 
+        setIsNumberAnimatedUp(false); 
+        animateNumberChangeUp(); 
       }
     }
   }, [drawnNumberMessage, setCurrentNumber]);
@@ -76,12 +78,12 @@ const DrawButton = () => {
   return (
     <TouchableOpacity
       onPress={drawNumberEnabled && !isCooldownActive ? drawNumber : null}
-      style={[styles.circle, { borderColor: bgColor },]}
+      style={[styles.circle, { borderColor: bgColor, backgroundColor: colors.card },]} 
       disabled={!drawNumberEnabled || isCooldownActive}
     >
       {currentNumber !== null && (
           <Animated.View style={{ transform: [{ translateY }, { scale }] }}>
-              <Text style={styles.drawnNumberText}>{currentNumber}</Text>
+              <Text style={[styles.drawnNumberText, { color: colors.text }]}>{currentNumber}</Text>
           </Animated.View>
       )}
     </TouchableOpacity>
@@ -95,14 +97,12 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     borderWidth: 2,
     marginBottom: 20,
-    backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center'
   },
   drawnNumberText: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#000'
   },
   cooldownText: {
     fontSize: 16,

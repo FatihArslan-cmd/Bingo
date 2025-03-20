@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect, useContext, memo } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { BingoContext } from 'bingo/src/context/BingoGameContext';
+import { useTheme } from '../../../../../../src/context/ThemeContext';
 
 const NumberBox = memo(({ number, isLast }) => {
+  const { colors } = useTheme();
   return (
-    <View style={[styles.numberBox, isLast ? styles.lastNumberBox : {}]}>
-      <Text style={[styles.numberText, isLast ? styles.lastNumberText : {}]}>{number}</Text>
+    <View style={[styles.numberBox, { backgroundColor: colors.card }, isLast ? styles.lastNumberBox : {}]}>
+      <Text style={[styles.numberText, { color: colors.text }, isLast ? styles.lastNumberText : {}]}>{number}</Text>
     </View>
   );
 });
@@ -16,6 +18,7 @@ const DrawnNumbersPanel = () => {
   const [isVisible, setIsVisible] = useState(true);
   const scrollRef = useRef(null);
   const totalNumbersInBingo = 90;
+  const { colors } = useTheme();
 
     useEffect(() => {
         if (scrollRef.current && drawnNumbers.length > 0) {
@@ -31,11 +34,11 @@ const DrawnNumbersPanel = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       {isVisible && (
         <View>
           <View style={styles.header}>
-            <Text style={styles.drawnCountText}>
+            <Text style={[styles.drawnCountText, { color: colors.text }]}>
               {drawnNumbers.length}/{totalNumbersInBingo}
             </Text>
           </View>
@@ -51,7 +54,7 @@ const DrawnNumbersPanel = () => {
                <NumberBox
                  key={index}
                  number={number}
-                 isLast={index === drawnNumbers.length - 1} // Check if it's the last number
+                 isLast={index === drawnNumbers.length - 1}
                />
              ))}
            </ScrollView>
@@ -81,11 +84,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 10,
     },
-    title: {
-        fontWeight: 'bold',
-        fontSize: 16,
-        color: '#000',
-    },
     closeButton:{
         padding: 5,
     },
@@ -99,7 +97,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   numberBox: {
-    backgroundColor: '#f0f0f0',
     borderRadius: 20,
     paddingVertical: 8,
     paddingHorizontal: 16,
@@ -110,7 +107,6 @@ const styles = StyleSheet.create({
   numberText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#000',
   },
   drawnCountText: {
     fontSize: 16,
@@ -121,10 +117,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   lastNumberBox: {
-    backgroundColor: '#8B0000', 
+    backgroundColor: '#8B0000',
   },
   lastNumberText: {
-    color: 'white', 
+    color: 'white',
   },
 });
 
