@@ -15,7 +15,7 @@ import { useBingoWebSocket } from '../../../../../../src/context/BingoGameWebsoc
 import { useTheme } from '../../../../../../src/context/ThemeContext.jsx';
 
 const UserListPanel = () => {
-  const { membersInfo } = useContext(BingoContext);
+  const { membersInfo,bgcolor } = useContext(BingoContext);
   const [isExpanded, setIsExpanded] = useState(false);
   const animation = useRef(new Animated.Value(0)).current;
   const { colors } = useTheme(); // Get colors from your custom theme

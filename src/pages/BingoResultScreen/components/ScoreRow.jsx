@@ -4,9 +4,10 @@ import { TouchableRipple } from 'react-native-paper';
 import { Text } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import styles from 'bingo/src/pages/BingoResultScreen/styles/styles';
+import { useTheme } from '../../../../../../src/context/ThemeContext';
 
 const ScoreRow = ({ username, score, index }) => {
-
+const { colors } = useTheme();
     const getPlayerRankStyle = (index) => {
         if (index === 0) return { backgroundColor: '#FFD700' }; // Gold
         if (index === 1) return { backgroundColor: '#C0C0C0' }; // Silver
@@ -33,7 +34,7 @@ const ScoreRow = ({ username, score, index }) => {
                     <Text style={styles.rankText}>{index + 1}</Text>
                 </View>
 
-                <Text style={styles.playerName}>
+                <Text style={[styles.playerName, { color: colors.text }]}>
                     {username}
                 </Text>
 
