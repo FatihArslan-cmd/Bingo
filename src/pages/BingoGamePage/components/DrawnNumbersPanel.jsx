@@ -1,12 +1,24 @@
-import React, { useState, useRef, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, ScrollView, Animated } from 'react-native';
+import React, { useState, useRef, useEffect, useContext, memo } from 'react';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { BingoContext } from 'bingo/src/context/BingoGameContext';
+import { useTheme } from '../../../../../../src/context/ThemeContext';
+
+const NumberBox = memo(({ number, isLast }) => {
+  const { colors } = useTheme();
+  return (
+    <View style={[styles.numberBox, { backgroundColor: colors.card }, isLast ? styles.lastNumberBox : {}]}>
+      <Text style={[styles.numberText, { color: colors.text }, isLast ? styles.lastNumberText : {}]}>{number}</Text>
+    </View>
+  );
+});
+NumberBox.displayName = 'NumberBox';
 
 const DrawnNumbersPanel = () => {
   const { drawnNumbers } = useContext(BingoContext);
   const [isVisible, setIsVisible] = useState(true);
   const scrollRef = useRef(null);
-  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const totalNumbersInBingo = 90;
+  const { colors } = useTheme();
 
     useEffect(() => {
         if (scrollRef.current && drawnNumbers.length > 0) {
@@ -22,26 +34,33 @@ const DrawnNumbersPanel = () => {
   };
 
   return (
-    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       {isVisible && (
         <View>
+          <View style={styles.header}>
+            <Text style={[styles.drawnCountText, { color: colors.text }]}>
+              {drawnNumbers.length}/{totalNumbersInBingo}
+            </Text>
+          </View>
            <ScrollView
              horizontal={true}
              contentContainerStyle={styles.scrollContent}
              showsHorizontalScrollIndicator={false}
+             fadingEdgeLength={50}
              ref={scrollRef}
               onContentSizeChange={() => scrollToEnd()}
            >
              {drawnNumbers.map((number, index) => (
-               <View key={index} style={styles.numberBox}>
-                 <Text style={styles.numberText}>{number}</Text>
-               </View>
+               <NumberBox
+                 key={index}
+                 number={number}
+                 isLast={index === drawnNumbers.length - 1}
+               />
              ))}
            </ScrollView>
         </View>
       )}
-
-    </Animated.View>
+    </View>
   );
 };
 
@@ -51,23 +70,19 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-      backgroundColor: '#fff',
+      backgroundColor: 'transparent',
     paddingBottom: 10,
     borderTopLeftRadius: 15,
       borderTopRightRadius: 15,
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    paddingTop: 10,
+    paddingHorizontal: 20,
   },
     header:{
       flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
         alignItems: 'center',
-        padding: 10,
-        width: '100%',
-    },
-    title: {
-        fontWeight: 'bold',
-        fontSize: 16,
-        color: '#000',
+        marginBottom: 10,
     },
     closeButton:{
         padding: 5,
@@ -82,7 +97,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   numberBox: {
-    backgroundColor: '#f0f0f0',
     borderRadius: 20,
     paddingVertical: 8,
     paddingHorizontal: 16,
@@ -93,8 +107,22 @@ const styles = StyleSheet.create({
   numberText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#000',
+  },
+  drawnCountText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
+  },
+  lastNumberBox: {
+    backgroundColor: '#8B0000',
+  },
+  lastNumberText: {
+    color: 'white',
   },
 });
 
-export default DrawnNumbersPanel;
+DrawnNumbersPanel.displayName = 'DrawnNumbersPanel';
+export default memo(DrawnNumbersPanel);

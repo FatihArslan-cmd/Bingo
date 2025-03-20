@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useContext } from 'react';
 import { View, StyleSheet, Animated, Easing } from 'react-native';
 import { BingoContext } from 'bingo/src/context/BingoGameContext';
+import { useTheme } from '../../../../../../src/context/ThemeContext';
 
 const Countdown = () => {
     const { countdown, isCountingDown } = useContext(BingoContext);
@@ -8,7 +9,7 @@ const Countdown = () => {
     const opacityAnim = useRef(new Animated.Value(1)).current;
     const translateYAnim = useRef(new Animated.Value(-100)).current;
     const opacityContainerAnim = useRef(new Animated.Value(0)).current;
-
+    const {colors} = useTheme();
 
     useEffect(() => {
         if (isCountingDown) {
@@ -97,16 +98,19 @@ const Countdown = () => {
                     styles.countdownWrapper,
                     {
                         transform: [{ scale: scaleAnim }],
+                        backgroundColor: colors.card,
+                        shadowColor: colors.text,
                     },
                 ]}
             >
-                <View style={styles.innerCircle}>
-                    <View style={styles.gradientOverlay} />
+                <View style={[styles.innerCircle, { backgroundColor: colors.background, borderColor: colors.border }]}> 
+                    <View style={[styles.gradientOverlay, { backgroundColor: `rgba(255, 255, 255, 0.5)` }]} />
                     <Animated.Text
                         style={[
                             styles.countdownText,
                             {
                                 opacity: opacityAnim,
+                                color: colors.text, 
                             },
                         ]}
                     >
@@ -126,6 +130,7 @@ const Countdown = () => {
                                     },
                                     { translateY: -35 },
                                 ],
+                                backgroundColor: colors.primary, 
                             },
                         ]}
                     />
@@ -148,10 +153,8 @@ const styles = StyleSheet.create({
         width: 80,
         height: 80,
         borderRadius: 40,
-        backgroundColor: '#f8f8f8',
         justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: '#000',
         shadowOffset: {
             width: 0,
             height: 2,
@@ -165,11 +168,9 @@ const styles = StyleSheet.create({
         width: 70,
         height: 70,
         borderRadius: 35,
-        backgroundColor: '#fff',
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 1.5,
-        borderColor: '#e8e8e8',
         overflow: 'hidden',
     },
     gradientOverlay: {
@@ -178,20 +179,17 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         height: '100%',
-        backgroundColor: 'rgba(255, 255, 255, 0.5)',
         borderRadius: 35,
     },
     countdownText: {
         fontSize: 32,
         fontWeight: 'bold',
-        color: '#444',
     },
     decorativeDot: {
         position: 'absolute',
         width: 4,
         height: 4,
         borderRadius: 2,
-        backgroundColor: '#007AFF',
         opacity: 0.4,
     },
 });
