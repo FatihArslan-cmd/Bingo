@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
     resultScreenContainer: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'space-between', // Değiştirildi: space-between
+        justifyContent: 'space-between', 
         padding: 20,
     },
     winnerCardStyle: {
@@ -99,9 +99,8 @@ const styles = StyleSheet.create({
     },
     buttonsContainer: {
         width: '80%',
-        marginBottom: 20, // Sayfanın en altında boşluk
-        // marginTop: 'auto', // Kaldırıldı
-        marginTop: 0, // Kaldırıldı
+        marginBottom: 20, 
+        marginTop: 0,
     },
     logoutButtonContainer: {
         position: 'absolute',
@@ -135,9 +134,9 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         textAlign: 'center',
     },
-    lottieAnimation: { // Lottie animation için stil
-        width: 400,  // Genişlik ayarlanabilir
-        height: 400, // Yükseklik ayarlanabilir
+    lottieAnimation: { 
+        width: 400,  
+        height: 400, 
         marginBottom: 20,
         marginTop: 10,
     },

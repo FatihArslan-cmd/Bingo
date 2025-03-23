@@ -32,7 +32,7 @@ export const BingoContextProvider = ({ children }) => {
     const [bingoWinnerUsername, setBingoWinnerUsername] = useState('');
     const [gameScores, setGameScores] = useState({});
 
-    const [membersInfo, setMembersInfo] = useState(null); // New state for members info
+    const [membersInfo, setMembersInfo] = useState(null); 
 
     const { sendMessage, messages } = useBingoWebSocket();
     const lastProcessedNumberDrawnRef = useRef(null);
@@ -106,7 +106,9 @@ export const BingoContextProvider = ({ children }) => {
 
     useEffect(() => {
         const bingoMessages = messages.filter(msg => msg.type === 'bingo');
+        console.log('b',bingoMessages);
         const latestBingoMessage = bingoMessages[bingoMessages.length - 1];
+        console.log('a',latestBingoMessage);
 
         if (
             latestBingoMessage &&
@@ -259,8 +261,8 @@ export const BingoContextProvider = ({ children }) => {
                 gameScores,
                 setGameScores,
 
-                membersInfo, // Expose membersInfo in the context
-                setMembersInfo, // Optionally expose the setter as well if needed
+                membersInfo, 
+                setMembersInfo, 
             }}
         >
             {children}

@@ -104,7 +104,7 @@ const Countdown = () => {
                 ]}
             >
                 <View style={[styles.innerCircle, { backgroundColor: colors.background, borderColor: colors.border }]}> 
-                    <View style={[styles.gradientOverlay, { backgroundColor: `rgba(255, 255, 255, 0.5)` }]} />
+                    <View style={[styles.gradientOverlay, { backgroundColor: colors.card }]} />
                     <Animated.Text
                         style={[
                             styles.countdownText,

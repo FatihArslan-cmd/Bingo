@@ -5,7 +5,7 @@ import styles from 'bingo/src/pages/BingoResultScreen/styles/styles';
 
 const ScoreList = ({ gameScores }) => {
     const sortedScores = Object.entries(gameScores)
-        .sort(([, scoreA], [, scoreB]) => scoreB - scoreA); // Sort by score descending
+        .sort(([, scoreA], [, scoreB]) => scoreB - scoreA);
 
     return (
         <ScrollView style={styles.scoresScrollView}>
