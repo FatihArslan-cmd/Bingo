@@ -3,10 +3,13 @@ import { TouchableRipple, Surface, IconButton, Text } from 'react-native-paper';
 import { StyleSheet, View } from 'react-native';
 import { BingoContext } from 'bingo/src/context/BingoGameContext';
 import { useTheme } from '../../../../../../src/context/ThemeContext';
+import {useTranslation} from 'react-i18next';
 
 const LastMessage = memo(() => {
     const { openMessageModal, lastMessage } = useContext(BingoContext);
     const { colors } = useTheme();
+    const {t} = useTranslation();
+
     const handlePress = useCallback(() => {
         openMessageModal();
     }, [openMessageModal]);
@@ -21,7 +24,7 @@ const LastMessage = memo(() => {
                 <Surface style={[styles.messagePreview, { backgroundColor: colors.card }]}>
                     <View style={styles.textBackground}> 
                         <Text numberOfLines={1} style={[styles.lastMessageText, { color: colors.text }]}>
-                            {lastMessage || 'No messages yet'}
+                            {lastMessage || t('bingoGame.noMessages')}
                         </Text>
                     </View>
                 </Surface>

@@ -10,6 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import FastImage from 'react-native-fast-image';
 import { useBingoWebSocket } from '../../../../../../src/context/BingoGameWebsocket';
+import {useTranslation} from 'react-i18next';
 
 export const ChinkoMessage = () => {
   const screenWidth = Dimensions.get('window').width;
@@ -17,6 +18,7 @@ export const ChinkoMessage = () => {
   const [messageData, setMessageData] = useState(null);
   const timeoutRef = useRef(null);
   const { messages } = useBingoWebSocket();
+  const {t} = useTranslation();
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.value }],
@@ -32,7 +34,7 @@ export const ChinkoMessage = () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
       setMessageData({
-        text: `${msg.username} ${msg.rowNumber}. satır çinkosunu yaptı!`,
+        text: `${msg.username} ${msg.rowNumber}. ${t('bingoGame.chinko')}`,
         profilePhoto: msg.profilePhoto
       });
 

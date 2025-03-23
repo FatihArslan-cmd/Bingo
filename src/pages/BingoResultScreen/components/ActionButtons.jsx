@@ -5,9 +5,11 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import styles from 'bingo/src/pages/BingoResultScreen/styles/styles';
 import lobbyService from '../../../../../../../GameCenter/src/pages/GameDetails/service/service.js';
 import { useTheme } from '../../../../../../src/context/ThemeContext';
+import {useTranslation} from 'react-i18next';
 
 const ActionButtons = () => {
     const [isLoading, setIsLoading] = useState(false);
+    const { t } = useTranslation();
 
     const handlePlayAgain = async () => {
         setIsLoading(true);
@@ -33,7 +35,9 @@ const ActionButtons = () => {
                     ) : (
                         <>
                             <Icon name="reload" size={24} color="#fff" />
-                            <Text style={styles.buttonText}>Start a new round</Text>
+                            <Text style={styles.buttonText}>
+                                {t('bingoGame.resultScreenButton')}
+                            </Text>
                         </>
                     )}
                 </View>
