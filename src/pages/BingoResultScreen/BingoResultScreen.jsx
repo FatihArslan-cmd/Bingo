@@ -10,6 +10,7 @@ import LogoutButton from 'bingo/src/pages/BingoGamePage/components/LogoutButton'
 import LottieView from 'lottie-react-native';
 import { BingoContext } from 'bingo/src/context/BingoGameContext';
 import { useTheme } from '../../../../../src/context/ThemeContext';
+
 const BingoResultScreen = () => {
     const { bingoWinnerUsername, gameScores } = useContext(BingoContext);
     const { colors, resolvedTheme } = useTheme();

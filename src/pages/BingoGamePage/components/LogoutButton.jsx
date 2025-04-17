@@ -7,16 +7,19 @@ import api from '../../../../../../src/shared/states/api';
 import { getToken } from '../../../../../../src/shared/states/api';
 import { useNavigation } from '@react-navigation/native';
 import { useTheme } from '../../../../../../src/context/ThemeContext';
+import {useTranslation} from 'react-i18next';
+
 const LogoutButton = () => {
   const { colors } = useTheme();
   const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
   const navigation = useNavigation();
+  const { t } = useTranslation();
 
-  const handleLogoutConfirmation = useCallback(() => { // useCallback ile sarıldı
+  const handleLogoutConfirmation = useCallback(() => { 
     setIsLogoutModalVisible(true);
-  }, [setIsLogoutModalVisible]); // Bağımlılık dizisine setIsLogoutModalVisible eklendi
+  }, [setIsLogoutModalVisible]);
 
-  const handleLogout = useCallback(async () => { // useCallback ile sarıldı
+  const handleLogout = useCallback(async () => { 
     setIsLogoutModalVisible(false);
     try {
       const token = await getToken();
@@ -26,22 +29,20 @@ const LogoutButton = () => {
       };
       await api.post('/lobby/end-game', {}, { headers });
       console.log("End game request sent on logout with headers");
-      // Başarılı logout durumunda yapılacak işlemler
     } catch (error) {
       console.error("Error ending game on logout:", error);
       if (error.response && error.response.status === 403) {
         console.log("403 hatası alındı, Tabs sayfasına yönlendiriliyor.");
         navigation.navigate('Tabs');
       } else {
-        // Diğer hatalar için genel hata işleme
         console.error("Logout sırasında beklenmeyen bir hata oluştu:", error);
       }
     }
-  }, [setIsLogoutModalVisible, navigation]); // Bağımlılık dizisine setIsLogoutModalVisible ve navigation eklendi
+  }, [setIsLogoutModalVisible, navigation]); 
 
-  const handleCancelLogout = useCallback(() => { // useCallback ile sarıldı
+  const handleCancelLogout = useCallback(() => { 
     setIsLogoutModalVisible(false);
-  }, [setIsLogoutModalVisible]); // Bağımlılık dizisine setIsLogoutModalVisible eklendi
+  }, [setIsLogoutModalVisible]);
 
   return (
     <>
@@ -55,9 +56,9 @@ const LogoutButton = () => {
         visible={isLogoutModalVisible}
         onDismiss={handleCancelLogout}
         onConfirm={handleLogout}
-        title="Logout Confirmation"
-        text="Are you sure you want to log out?"
-        confirmText="Logout"
+        title={t('bingoGame.logoutTitle')}
+        text={t('bingoGame.logoutDescription')}
+        confirmText={t('bingoGame.logout')}
         showConfirmButton={true}
       />
     </>

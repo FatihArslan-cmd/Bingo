@@ -5,9 +5,12 @@ import { Text } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import styles from 'bingo/src/pages/BingoResultScreen/styles/styles';
 import { useTheme } from '../../../../../../src/context/ThemeContext';
+import {useTranslation} from 'react-i18next';
 
 const ScoreRow = ({ username, score, index }) => {
 const { colors } = useTheme();
+const { t } = useTranslation();
+
     const getPlayerRankStyle = (index) => {
         if (index === 0) return { backgroundColor: '#FFD700' }; // Gold
         if (index === 1) return { backgroundColor: '#C0C0C0' }; // Silver
@@ -39,7 +42,7 @@ const { colors } = useTheme();
                 </Text>
 
                 <Text style={styles.playerScore}>
-                    {score} Puan
+                    {score} {t('bingoGame.point')}
                 </Text>
             </View>
         </TouchableRipple>

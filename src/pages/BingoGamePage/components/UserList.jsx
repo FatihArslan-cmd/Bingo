@@ -13,6 +13,7 @@ import {
 import { BingoContext } from 'bingo/src/context/BingoGameContext';
 import { useBingoWebSocket } from '../../../../../../src/context/BingoGameWebsocket.js';
 import { useTheme } from '../../../../../../src/context/ThemeContext.jsx';
+import {useTranslation} from 'react-i18next';
 
 const UserListPanel = () => {
   const { membersInfo,bgcolor } = useContext(BingoContext);
@@ -23,6 +24,7 @@ const UserListPanel = () => {
   const { messages } = useBingoWebSocket();
   const [users, setUsers] = useState([]);
   const primaryNavigationColor = colors.navigationFill; // Use navigationFill from theme for primary color
+  const { t } = useTranslation();
 
   useEffect(() => {
     Animated.timing(animation, {
@@ -163,13 +165,13 @@ const UserListPanel = () => {
         right={() => (
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
-              <Text style={[styles.statLabel, { color: colors.subText }]}>Bingo</Text> {/* Themed stat label color */}
-              <Text style={[styles.statValue, { color: colors.text }]}>{item.score}</Text> {/* Themed stat value color */}
+              <Text style={[styles.statLabel, { color: colors.subText }]}>Bingo</Text>
+              <Text style={[styles.statValue, { color: colors.text }]}>{item.score}</Text> 
             </View>
-            <Divider style={{ ...styles.verticalDivider, backgroundColor: colors.border }} /> {/* Themed divider color */}
+            <Divider style={{ ...styles.verticalDivider, backgroundColor: colors.border }} />
             <View style={styles.statItem}>
-              <Text style={[styles.statLabel, { color: colors.subText }]}>Cinko</Text> {/* Themed stat label color */}
-              <Text style={[styles.statValue, { color: colors.text }]}>{item.cinko}</Text> {/* Themed stat value color */}
+              <Text style={[styles.statLabel, { color: colors.subText }]}>Cinko</Text> 
+              <Text style={[styles.statValue, { color: colors.text }]}>{item.cinko}</Text> 
             </View>
           </View>
         )}
@@ -178,17 +180,19 @@ const UserListPanel = () => {
   );
 
   return (
-    <Surface style={[styles.container, { backgroundColor: colors.background }]} elevation={2}> {/* Themed Surface background */}
+    <Surface style={[styles.container, { backgroundColor: colors.background }]} elevation={2}>
       <TouchableRipple onPress={toggleExpand}
         rippleColor={colors.ripple} // Themed ripple color
       >
         <View style={styles.headerContainer}>
           <View style={styles.headerContent}>
-            <IconButton icon="account-group" size={24} iconColor={primaryNavigationColor} /> {/* Fixed icon color */}
-            <Text variant="titleLarge" style={[styles.playerText, { color: primaryNavigationColor }]}>Players</Text> {/* Fixed "Players" text color */}
+            <IconButton icon="account-group" size={24} iconColor={primaryNavigationColor} /> 
+            <Text variant="titleLarge" style={[styles.playerText, { color: primaryNavigationColor }]}>
+              {t('bingoGame.players')}
+              </Text> 
           </View>
           <Animated.View style={{ transform: [{ rotate }] }}>
-            <IconButton icon="chevron-down" size={24} iconColor={primaryNavigationColor} /> {/* Fixed icon color */}
+            <IconButton icon="chevron-down" size={24} iconColor={primaryNavigationColor} />
           </Animated.View>
         </View>
       </TouchableRipple>
