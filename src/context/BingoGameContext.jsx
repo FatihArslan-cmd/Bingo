@@ -1,8 +1,7 @@
-import React, { createContext, useState, useEffect, useCallback, useRef, useContext } from 'react';
-import { useBingoWebSocket } from '../../../../src/context/BingoGameWebsocket.js';
-import { UserContext } from '../../../../src/context/UserContext.jsx';
-import getUserBingoCardData from 'bingo/src/service/service.js';
-
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import getUserBingoCardData from "bingo/src/service/service.js";
+import { useBingoWebSocket } from "../../../../src/context/BingoGameWebsocket.js";
+import { UserContext } from "../../../../src/context/UserContext.jsx";
 
 export const BingoContext = createContext();
 
@@ -41,22 +40,20 @@ export const BingoContextProvider = ({ children }) => {
     useEffect(() => {
         const loadBingoCard = async () => {
             if (!user?.username) {
-                setCardError('Kullanıcı bilgisi bulunamadı!');
                 return;
             }
 
             try {
                 setIsCardLoading(true);
-                const { bingoCard, cardColor, membersInfo: fetchedMembersInfo } = await getUserBingoCardData(user.username); // Destructure membersInfo from the return
+                const { bingoCard, cardColor, membersInfo: fetchedMembersInfo } = await getUserBingoCardData(user.username);
 
                 setCard(bingoCard);
                 setBgColor(cardColor);
-                setMembersInfo(fetchedMembersInfo); // Set the members info state
+                setMembersInfo(fetchedMembersInfo); 
                 setCardError(null);
 
             } catch (error) {
-                console.error('Bingo kartı yüklenemedi:', error);
-                setCardError('Bingo kartı yüklenemedi. Lütfen tekrar deneyin.');
+                setCardError('error');
             } finally {
                 setIsCardLoading(false);
             }
@@ -106,10 +103,7 @@ export const BingoContextProvider = ({ children }) => {
 
     useEffect(() => {
         const bingoMessages = messages.filter(msg => msg.type === 'bingo');
-        console.log('b',bingoMessages);
         const latestBingoMessage = bingoMessages[bingoMessages.length - 1];
-        console.log('a',latestBingoMessage);
-
         if (
             latestBingoMessage &&
             latestBingoMessage !== lastProcessedBingoRef.current

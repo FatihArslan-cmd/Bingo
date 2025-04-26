@@ -1,9 +1,9 @@
-import React, { useRef, useEffect, useState, useContext } from 'react';
-import { Animated, StyleSheet, View } from 'react-native'; 
-import { useBingoWebSocket } from '../../../../../../src/context/BingoGameWebsocket';
-import { BingoContext } from 'bingo/src/context/BingoGameContext';
-import FastImage from 'react-native-fast-image'; 
-import { Text } from 'react-native-paper';
+import FastImage from "react-native-fast-image";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { BingoContext } from "bingo/src/context/BingoGameContext";
+import { Animated, StyleSheet, View } from "react-native";
+import { Text } from "react-native-paper";
+import { useBingoWebSocket } from "../../../../../../src/context/BingoGameWebsocket";
 
 const AnimatedEmoji = () => {
   const positionY = useRef(new Animated.Value(0)).current;

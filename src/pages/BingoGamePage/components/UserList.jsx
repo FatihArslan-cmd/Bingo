@@ -1,5 +1,11 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
-import { View, StyleSheet, Animated, Platform, FlatList } from 'react-native';
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { TabActions } from "@react-navigation/native";
+import { BingoContext } from "bingo/src/context/BingoGameContext";
+import { Animated, FlatList, Platform, StyleSheet, View } from "react-native";
+import { useBingoWebSocket } from "../../../../../../src/context/BingoGameWebsocket.js";
+import { useTheme } from "../../../../../../src/context/ThemeContext.jsx";
+import { isTablet } from "../../../../../../src/utils/isTablet.js";
+
 import {
   Surface,
   List,
@@ -10,13 +16,11 @@ import {
   IconButton,
   TouchableRipple
 } from 'react-native-paper';
-import { BingoContext } from 'bingo/src/context/BingoGameContext';
-import { useBingoWebSocket } from '../../../../../../src/context/BingoGameWebsocket.js';
-import { useTheme } from '../../../../../../src/context/ThemeContext.jsx';
-import {useTranslation} from 'react-i18next';
+
+const TABLET_DEVICE = isTablet();
 
 const UserListPanel = () => {
-  const { membersInfo,bgcolor } = useContext(BingoContext);
+  const { membersInfo } = useContext(BingoContext);
   const [isExpanded, setIsExpanded] = useState(false);
   const animation = useRef(new Animated.Value(0)).current;
   const { colors } = useTheme(); // Get colors from your custom theme
@@ -24,7 +28,6 @@ const UserListPanel = () => {
   const { messages } = useBingoWebSocket();
   const [users, setUsers] = useState([]);
   const primaryNavigationColor = colors.navigationFill; // Use navigationFill from theme for primary color
-  const { t } = useTranslation();
 
   useEffect(() => {
     Animated.timing(animation, {
@@ -165,13 +168,13 @@ const UserListPanel = () => {
         right={() => (
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
-              <Text style={[styles.statLabel, { color: colors.subText }]}>Bingo</Text>
-              <Text style={[styles.statValue, { color: colors.text }]}>{item.score}</Text> 
+              <Text style={[styles.statLabel, { color: colors.subText }]}>Bingo</Text> {/* Themed stat label color */}
+              <Text style={[styles.statValue, { color: colors.text }]}>{item.score}</Text> {/* Themed stat value color */}
             </View>
-            <Divider style={{ ...styles.verticalDivider, backgroundColor: colors.border }} />
+            <Divider style={{ ...styles.verticalDivider, backgroundColor: colors.border }} /> {/* Themed divider color */}
             <View style={styles.statItem}>
-              <Text style={[styles.statLabel, { color: colors.subText }]}>Cinko</Text> 
-              <Text style={[styles.statValue, { color: colors.text }]}>{item.cinko}</Text> 
+              <Text style={[styles.statLabel, { color: colors.subText }]}>Cinko</Text> {/* Themed stat label color */}
+              <Text style={[styles.statValue, { color: colors.text }]}>{item.cinko}</Text> {/* Themed stat value color */}
             </View>
           </View>
         )}
@@ -180,19 +183,17 @@ const UserListPanel = () => {
   );
 
   return (
-    <Surface style={[styles.container, { backgroundColor: colors.background }]} elevation={2}>
+    <Surface style={[styles.container, { backgroundColor: colors.background }]} elevation={2}> {/* Themed Surface background */}
       <TouchableRipple onPress={toggleExpand}
         rippleColor={colors.ripple} // Themed ripple color
       >
         <View style={styles.headerContainer}>
           <View style={styles.headerContent}>
-            <IconButton icon="account-group" size={24} iconColor={primaryNavigationColor} /> 
-            <Text variant="titleLarge" style={[styles.playerText, { color: primaryNavigationColor }]}>
-              {t('bingoGame.players')}
-              </Text> 
+            <IconButton icon="account-group" size={TABLET_DEVICE ? 24 : 18} iconColor={primaryNavigationColor} /> {/* Fixed icon color */}
+            <Text variant="titleLarge" style={[styles.playerText, { color: primaryNavigationColor }]}>Players</Text> {/* Fixed "Players" text color */}
           </View>
           <Animated.View style={{ transform: [{ rotate }] }}>
-            <IconButton icon="chevron-down" size={24} iconColor={primaryNavigationColor} />
+            <IconButton icon="chevron-down" size={TABLET_DEVICE ? 24 : 18} iconColor={primaryNavigationColor} /> {/* Fixed icon color */}
           </Animated.View>
         </View>
       </TouchableRipple>
@@ -225,7 +226,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   headerContainer: {
-    padding: 12,
+    padding: TABLET_DEVICE ? 12 : 6,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -277,6 +278,7 @@ const styles = StyleSheet.create({
   },
   playerText: {
     fontWeight: 'bold',
+    fontSize: TABLET_DEVICE ? 16 : 12,
   }
 });
 

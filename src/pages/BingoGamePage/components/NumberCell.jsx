@@ -1,6 +1,6 @@
-import React, { useContext, memo } from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { BingoContext } from 'bingo/src/context/BingoGameContext';
+import React, { memo, useContext } from "react";
+import { BingoContext } from "bingo/src/context/BingoGameContext";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
 const NumberCell = memo(({ num }) => {
     const { bgColor, drawnNumbers, handleCellPress, markedNumbers } = useContext(BingoContext);

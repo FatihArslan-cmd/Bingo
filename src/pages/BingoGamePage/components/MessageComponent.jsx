@@ -1,5 +1,8 @@
-import React, { useState, useCallback, useEffect, useContext, useRef, memo } from 'react';
-import { StyleSheet, FlatList, Dimensions, View, Image } from 'react-native';
+import React, { memo, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { BlurView } from "@react-native-community/blur";
+import { BingoContext } from "bingo/src/context/BingoGameContext";
+import { Dimensions, FlatList, Image, StyleSheet, View } from "react-native";
+
 import {
     Modal,
     Portal,
@@ -10,8 +13,6 @@ import {
     IconButton,
     TouchableRipple
 } from 'react-native-paper';
-import { BlurView } from '@react-native-community/blur';
-import { BingoContext } from 'bingo/src/context/BingoGameContext';
 
 const { height } = Dimensions.get('window');
 

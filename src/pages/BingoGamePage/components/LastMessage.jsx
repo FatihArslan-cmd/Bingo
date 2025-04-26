@@ -1,15 +1,15 @@
-import React, { useContext, memo, useCallback } from 'react';
-import { TouchableRipple, Surface, IconButton, Text } from 'react-native-paper';
-import { StyleSheet, View } from 'react-native';
-import { BingoContext } from 'bingo/src/context/BingoGameContext';
-import { useTheme } from '../../../../../../src/context/ThemeContext';
-import {useTranslation} from 'react-i18next';
+import React, { memo, useCallback, useContext } from "react";
+import { BingoContext } from "bingo/src/context/BingoGameContext";
+import { StyleSheet, View } from "react-native";
+import { IconButton, Surface, Text, TouchableRipple } from "react-native-paper";
+import { useTheme } from "../../../../../../src/context/ThemeContext";
+import { isTablet } from "../../../../../../src/utils/isTablet";
+
+const TABLET_DEVICE = isTablet();
 
 const LastMessage = memo(() => {
     const { openMessageModal, lastMessage } = useContext(BingoContext);
     const { colors } = useTheme();
-    const {t} = useTranslation();
-
     const handlePress = useCallback(() => {
         openMessageModal();
     }, [openMessageModal]);
@@ -24,14 +24,14 @@ const LastMessage = memo(() => {
                 <Surface style={[styles.messagePreview, { backgroundColor: colors.card }]}>
                     <View style={styles.textBackground}> 
                         <Text numberOfLines={1} style={[styles.lastMessageText, { color: colors.text }]}>
-                            {lastMessage || t('bingoGame.noMessages')}
+                            {lastMessage || 'No messages yet'}
                         </Text>
                     </View>
                 </Surface>
                 <IconButton
                     icon="message-text-outline"
                     iconColor={colors.text}
-                    size={24}
+                    size={TABLET_DEVICE ? 24 : 16}
                     style={[styles.messageIcon, { backgroundColor: colors.card }]}
                 />
             </View>
@@ -64,12 +64,12 @@ const styles = StyleSheet.create({
     textBackground: {
         backgroundColor: 'rgba(0, 0, 0, 0.1)',
         borderRadius: 5, 
-        paddingHorizontal: 10, 
-        paddingVertical: 6,
+        paddingHorizontal: TABLET_DEVICE ? 10 : 6, 
+        paddingVertical: TABLET_DEVICE ? 6 : 4,
     },
     lastMessageText: {
         color: '#333',
-        fontSize: 12,
+        fontSize: TABLET_DEVICE ? 12 : 9,
         fontFamily: 'Orbitron-ExtraBold',
     },
     messageIcon: {

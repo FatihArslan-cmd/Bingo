@@ -1,4 +1,7 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
+import { isTablet } from "../../../../../../src/utils/isTablet.js";
+
+const TABLET_DEVICE = isTablet();
 
 const styles = StyleSheet.create({
     container: {
@@ -25,7 +28,7 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     bingoWinnerTitle: {
-        fontSize: 22,
+        fontSize: TABLET_DEVICE ? 22 : 14,
         fontFamily: 'Orbitron-ExtraBold',
         color: '#6a11cb',
         marginBottom: 15,
@@ -35,7 +38,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     winnerName: {
-        fontSize: 24,
+        fontSize: TABLET_DEVICE ? 24 : 16,
         fontFamily: 'Orbitron-ExtraBold',
         marginBottom: 5,
     },
@@ -74,8 +77,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        width: 40,
-        height: 40,
+        width: TABLET_DEVICE ? 40 : 30,
+        height: TABLET_DEVICE ? 40 : 30,
         borderRadius: 20,
         marginRight: 10,
     },
@@ -89,11 +92,11 @@ const styles = StyleSheet.create({
     },
     playerName: {
         flex: 1,
-        fontSize: 16,
+        fontSize: TABLET_DEVICE ? 16 : 12,
         fontFamily: 'Orbitron-ExtraBold',
     },
     playerScore: {
-        fontSize: 16,
+        fontSize: TABLET_DEVICE ? 16 : 12,
         fontFamily: 'Orbitron-ExtraBold',
         color: '#2575fc',
     },
@@ -129,14 +132,14 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: '#fff',
-        fontSize: 18,
+        fontSize: TABLET_DEVICE ? 16 : 13,
         fontFamily: 'Orbitron-ExtraBold',
         marginLeft: 10,
         textAlign: 'center',
     },
     lottieAnimation: { 
-        width: 400,  
-        height: 400, 
+        width: TABLET_DEVICE ? 400 : 300,  
+        height: TABLET_DEVICE ? 400 : 300, 
         marginBottom: 20,
         marginTop: 10,
     },

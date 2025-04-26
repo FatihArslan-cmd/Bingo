@@ -1,8 +1,12 @@
-import React, { useContext } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, Dimensions, TouchableWithoutFeedback } from 'react-native';
-import { BingoContext } from 'bingo/src/context/BingoGameContext';
-import Icon from 'react-native-vector-icons/Ionicons'; // Import Icon
-import { useTheme } from '../../../../../../src/context/ThemeContext';
+import Icon from "react-native-vector-icons/Ionicons";
+import React, { useContext } from "react";
+import { BingoContext } from "bingo/src/context/BingoGameContext";
+import { Dimensions, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { useTheme } from "../../../../../../src/context/ThemeContext";
+import { isTablet } from "../../../../../../src/utils/isTablet";
+
+const TABLET_DEVICE = isTablet();
+
 const screenWidth = Dimensions.get('window').width;
 
 const EmojiPanel = () => {
@@ -13,7 +17,6 @@ const EmojiPanel = () => {
   }
 
   const handleEmojiPress = (emoji) => {
-    console.log("EmojiPanel: handleEmojiPress called for emoji:", emoji); // ADD THIS LOG
       handleEmojiSelectContext(emoji); // Call the context's emoji selection handler
   };
 
@@ -76,9 +79,9 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   emojiText: {
-    fontSize: 35,
+    fontSize: TABLET_DEVICE ? 36 : 24,
   },
-  toggleButton: { // Style for the toggle button
+  toggleButton: { 
     position: 'absolute',
     top: 10,
     left: 10,
