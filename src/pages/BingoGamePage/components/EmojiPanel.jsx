@@ -32,7 +32,7 @@ const EmojiPanel = () => {
             >
               <Icon
                 name={displayEmojis ? "eye-outline" : "eye-off-outline"}
-                size={24}
+                size={TABLET_DEVICE ? 24 : 16}
                 color={colors.text}
               />
             </TouchableOpacity>

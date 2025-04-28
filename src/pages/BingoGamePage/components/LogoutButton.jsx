@@ -70,10 +70,10 @@ const LogoutButton = () => {
 
 const styles = StyleSheet.create({
     logoutButton: {
-        padding: 10,
+        paddingTop: 25,
     },
     iconContainer: {
-        borderRadius: 20,
+        borderRadius: 55,
         padding: 10,
     },
 });

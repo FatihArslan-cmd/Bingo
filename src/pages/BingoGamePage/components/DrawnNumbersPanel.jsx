@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 15,
     alignItems: 'flex-start',
     paddingTop: 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: TABLET_DEVICE ? 20 : 10,
   },
     header:{
       flexDirection: 'row',

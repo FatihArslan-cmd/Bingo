@@ -8,7 +8,7 @@ const MainAppContext = () => {
 
     return (
         <>
-            {!isBingoOccurred ? <BingoResultScreen /> : <BingoGamePage />}
+            {isBingoOccurred ? <BingoResultScreen /> : <BingoGamePage />}
         </>
     );
 };

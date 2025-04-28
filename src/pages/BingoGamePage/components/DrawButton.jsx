@@ -71,7 +71,7 @@ const DrawButton = () => {
 
   const translateY = animatedValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, -150],
+    outputRange: [0,TABLET_DEVICE ? -150 : -100],
   });
   const scale = animatedValue.interpolate({
     inputRange: [0, 1],
@@ -106,11 +106,6 @@ const styles = StyleSheet.create({
   drawnNumberText: {
     fontSize: TABLET_DEVICE ? 28 : 20,
     fontWeight: 'bold',
-  },
-  cooldownText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: 'red',
   },
 });
 

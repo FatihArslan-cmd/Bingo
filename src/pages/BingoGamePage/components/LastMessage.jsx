@@ -42,7 +42,7 @@ const LastMessage = memo(() => {
 const styles = StyleSheet.create({
     messageTouchable: {
         position: 'absolute',
-        top: 45,
+        top: 25,
         flexDirection: 'row',
         alignItems: 'center',
         zIndex: 10,
@@ -57,7 +57,6 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         paddingHorizontal: 12,
         paddingVertical: 8,
-        marginRight: 10,
         maxWidth: 200,
         overflow: 'hidden', 
     },
