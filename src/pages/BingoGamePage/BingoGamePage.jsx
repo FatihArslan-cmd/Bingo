@@ -1,6 +1,7 @@
 import AnimatedEmoji from "bingo/src/pages/BingoGamePage/components/AnimatedEmoji";
 import BingoCard from "bingo/src/pages/BingoGamePage/components/BingoCard";
 import Countdown from "bingo/src/pages/BingoGamePage/components/CountDown";
+import DrawAllNumbersButton from "bingo/src/pages/BingoGamePage/components/DrawAllNumbersButton";
 import DrawButton from "bingo/src/pages/BingoGamePage/components/DrawButton";
 import DrawnNumbersPanel from "bingo/src/pages/BingoGamePage/components/DrawnNumbersPanel";
 import EmojiButton from "bingo/src/pages/BingoGamePage/components/EmojiButon";
@@ -43,7 +44,7 @@ const BingoGamePage = () => {
                 <EmojiButton />
                 <AnimatedEmoji />
             </View>
-
+            <DrawAllNumbersButton />
             <EmojiPanel />
             <DrawnNumbersPanel />
 

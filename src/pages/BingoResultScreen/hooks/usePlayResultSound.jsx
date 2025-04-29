@@ -3,18 +3,27 @@ import { useEffect } from "react";
 
 export const usePlayResultSound = () => {
   useEffect(() => {
-    let sound = null;
+    let soundInstance = null;
 
-    sound = new Sound('game_result.mp3', Sound.MAIN_BUNDLE, (error) => {
+    Sound.setCategory('Playback');
+
+    soundInstance = new Sound('game_result.mp3', Sound.MAIN_BUNDLE, (error) => {
       if (error) {
         return;
       }
+      soundInstance.play((success) => {
+        if (success) {
+          console.log('Sound played successfully');
+        } else {
+          console.error('Sound playback failed');
+        }
+      });
     });
 
     return () => {
-      if (sound) {
-        sound.release();
-        sound = null;
+      if (soundInstance) {
+        soundInstance.release();
+        soundInstance = null;
       }
     };
 
