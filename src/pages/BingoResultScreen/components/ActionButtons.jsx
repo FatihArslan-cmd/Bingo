@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { View, ActivityIndicator } from 'react-native';
-import { Text, TouchableRipple } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import styles from 'bingo/src/pages/BingoResultScreen/styles/styles';
-import lobbyService from '../../../../../../../GameCenter/src/pages/GameDetails/service/service.js';
-import { useTheme } from '../../../../../../src/context/ThemeContext';
-import {useTranslation} from 'react-i18next';
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import React, { useState } from "react";
+import lobbyService from "../../../../../../../GameCenter/src/pages/GameDetails/service/service.js";
+import styles from "bingo/src/pages/BingoResultScreen/styles/styles";
+import { ActivityIndicator, View } from "react-native";
+import { Text, TouchableRipple } from "react-native-paper";
+import { isTablet } from "../../../../../../src/utils/isTablet.js";
+
+const TABLET_DEVICE = isTablet();
 
 const ActionButtons = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const { t } = useTranslation();
 
     const handlePlayAgain = async () => {
         setIsLoading(true);
@@ -34,10 +34,8 @@ const ActionButtons = () => {
                         <ActivityIndicator size="small" color="#fff" /> 
                     ) : (
                         <>
-                            <Icon name="reload" size={24} color="#fff" />
-                            <Text style={styles.buttonText}>
-                                {t('bingoGame.resultScreenButton')}
-                            </Text>
+                            <Icon name="reload" size={TABLET_DEVICE ? 24 : 18} color="#fff" />
+                            <Text style={styles.buttonText}>Start a new round</Text>
                         </>
                     )}
                 </View>

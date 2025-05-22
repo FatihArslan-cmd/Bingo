@@ -1,13 +1,16 @@
-import React , {  useState, useCallback } from 'react'; // useCallback import edildi
-import { StyleSheet, View } from 'react-native';
-import { TouchableRipple } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import CustomModal from '../../../../../../src/components/CustomModal';
-import api from '../../../../../../src/shared/states/api';
-import { getToken } from '../../../../../../src/shared/states/api';
-import { useNavigation } from '@react-navigation/native';
-import { useTheme } from '../../../../../../src/context/ThemeContext';
-import {useTranslation} from 'react-i18next';
+import CustomModal from "../../../../../../src/components/CustomModal";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import React , { useCallback, useState } from "react";
+import api from "../../../../../../src/shared/states/api";
+import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
+import { StyleSheet, View } from "react-native";
+import { TouchableRipple } from "react-native-paper";
+import { useTheme } from "../../../../../../src/context/ThemeContext";
+import { getToken } from "../../../../../../src/shared/states/api";
+import { isTablet } from "../../../../../../src/utils/isTablet";
+
+const TABLET_DEVICE = isTablet();
 
 const LogoutButton = () => {
   const { colors } = useTheme();
@@ -48,7 +51,7 @@ const LogoutButton = () => {
     <>
       <TouchableRipple style={styles.logoutButton} onPress={handleLogoutConfirmation}>
         <View style={styles.iconContainer}>
-          <Icon name="logout" size={24} color={colors.text} />
+          <Icon name="logout" size={TABLET_DEVICE ? 24 : 18} color={colors.text} />
         </View>
       </TouchableRipple>
 
@@ -67,10 +70,10 @@ const LogoutButton = () => {
 
 const styles = StyleSheet.create({
     logoutButton: {
-        padding: 10,
+        paddingTop: 25,
     },
     iconContainer: {
-        borderRadius: 20,
+        borderRadius: 55,
         padding: 10,
     },
 });

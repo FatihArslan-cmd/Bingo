@@ -1,7 +1,11 @@
-import React, { useState, useRef, useEffect, useContext, memo } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { BingoContext } from 'bingo/src/context/BingoGameContext';
-import { useTheme } from '../../../../../../src/context/ThemeContext';
+import React, { memo, useContext, useEffect, useRef, useState } from "react";
+import Sound from "react-native-sound";
+import { BingoContext } from "bingo/src/context/BingoGameContext";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { useTheme } from "../../../../../../src/context/ThemeContext";
+import { isTablet } from "../../../../../../src/utils/isTablet";
+
+const TABLET_DEVICE = isTablet();
 
 const NumberBox = memo(({ number, isLast }) => {
   const { colors } = useTheme();
@@ -20,16 +24,54 @@ const DrawnNumbersPanel = () => {
   const totalNumbersInBingo = 90;
   const { colors } = useTheme();
 
+  const bingoSoundRef = useRef(null);
+  const previousDrawnCountRef = useRef(0);
+
+  useEffect(() => {
+    const soundFileName = 'number_draw.wav';
+
+    const sound = new Sound(soundFileName, Sound.MAIN_BUNDLE, (error) => {
+      if (error) {
+        console.log(`Failed to load the sound ${soundFileName}`, error);
+      } else {
+         console.log(`Sound ${soundFileName} loaded successfully`);
+      }
+      bingoSoundRef.current = sound;
+    });
+
+    return () => {
+      if (bingoSoundRef.current) {
+        bingoSoundRef.current.release();
+        console.log(`Sound ${soundFileName} released`);
+      }
+    };
+  }, []);
+
     useEffect(() => {
         if (scrollRef.current && drawnNumbers.length > 0) {
             scrollToEnd();
         }
-    }, [drawnNumbers]);
 
+        if (drawnNumbers.length > previousDrawnCountRef.current && bingoSoundRef.current) {
+             console.log('Playing sound for new number');
+             bingoSoundRef.current.play((success) => {
+                if (success) {
+                    console.log('Sound played successfully');
+                } else {
+                    console.log('Sound playback failed');
+                }
+             });
+        }
+
+        previousDrawnCountRef.current = drawnNumbers.length;
+
+    }, [drawnNumbers]);
 
   const scrollToEnd = () => {
       if (scrollRef.current) {
-          scrollRef.current.scrollToEnd({ animated: true });
+          setTimeout(() => {
+             scrollRef.current.scrollToEnd({ animated: true });
+          }, 10);
       }
   };
 
@@ -70,13 +112,12 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-      backgroundColor: 'transparent',
     paddingBottom: 10,
     borderTopLeftRadius: 15,
-      borderTopRightRadius: 15,
+    borderTopRightRadius: 15,
     alignItems: 'flex-start',
     paddingTop: 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: TABLET_DEVICE ? 20 : 10,
   },
     header:{
       flexDirection: 'row',
@@ -105,13 +146,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   numberText: {
-    fontSize: 16,
+    fontSize: TABLET_DEVICE ? 16 : 12,
     fontWeight: 'bold',
   },
   drawnCountText: {
-    fontSize: 16,
+    fontSize: TABLET_DEVICE ? 16 : 12,
     fontWeight: 'bold',
-    color: '#333',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 10,

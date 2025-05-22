@@ -1,7 +1,7 @@
-import React from 'react';
-import { ScrollView } from 'react-native';
-import ScoreRow from 'bingo/src/pages/BingoResultScreen/components/ScoreRow';
-import styles from 'bingo/src/pages/BingoResultScreen/styles/styles';
+import React from "react";
+import ScoreRow from "bingo/src/pages/BingoResultScreen/components/ScoreRow";
+import styles from "bingo/src/pages/BingoResultScreen/styles/styles";
+import { ScrollView } from "react-native";
 
 const ScoreList = ({ gameScores }) => {
     const sortedScores = Object.entries(gameScores)

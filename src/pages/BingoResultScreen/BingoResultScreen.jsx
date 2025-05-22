@@ -1,26 +1,26 @@
-import React,{useContext} from 'react';
-import { View, StatusBar } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'react-native-linear-gradient';
-import styles from 'bingo/src/pages/BingoResultScreen/styles/styles';
-import WinnerCard from 'bingo/src/pages/BingoResultScreen/components/WinnerCard';
-import ScoresCard from 'bingo/src/pages/BingoResultScreen/components/ScoresCard';
-import ActionButtons from 'bingo/src/pages/BingoResultScreen/components/ActionButtons';
-import LogoutButton from 'bingo/src/pages/BingoGamePage/components/LogoutButton';
-import LottieView from 'lottie-react-native';
-import { BingoContext } from 'bingo/src/context/BingoGameContext';
-import { useTheme } from '../../../../../src/context/ThemeContext';
+import ActionButtons from "bingo/src/pages/BingoResultScreen/components/ActionButtons";
+import LogoutButton from "bingo/src/pages/BingoGamePage/components/LogoutButton";
+import LottieView from "lottie-react-native";
+import React, { useContext } from "react";
+import ScoresCard from "bingo/src/pages/BingoResultScreen/components/ScoresCard";
+import WinnerCard from "bingo/src/pages/BingoResultScreen/components/WinnerCard";
+import styles from "bingo/src/pages/BingoResultScreen/styles/styles";
+import { BingoContext } from "bingo/src/context/BingoGameContext";
+import { usePlayResultSound } from "bingo/src/pages/BingoResultScreen/hooks/usePlayResultSound";
+import { StatusBar, View } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "../../../../../src/context/ThemeContext";
 
 const BingoResultScreen = () => {
     const { bingoWinnerUsername, gameScores } = useContext(BingoContext);
     const { colors, resolvedTheme } = useTheme();
     const barStyle = resolvedTheme === 'dark' ? 'light-content' : 'dark-content';
 
+    usePlayResultSound(); 
+
     return (
         <SafeAreaProvider>
-            <View
-                style={[styles.container,{backgroundColor:colors.background}]}
-            >
+            <View style={[styles.container, { backgroundColor: colors.background }]}>
                 <SafeAreaView style={{ flex: 1 }}>
                     <StatusBar
                         translucent

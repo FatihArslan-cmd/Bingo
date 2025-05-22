@@ -1,6 +1,10 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { Dimensions, StyleSheet } from 'react-native';
-import { Surface, Text } from 'react-native-paper';
+import FastImage from "react-native-fast-image";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import Sound from "react-native-sound";
+import { Dimensions, StyleSheet } from "react-native";
+import { Surface, Text } from "react-native-paper";
+import { useBingoWebSocket } from "../../../../../../src/context/BingoGameWebsocket";
+
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -8,9 +12,9 @@ import Animated, {
   Easing,
   runOnJS
 } from 'react-native-reanimated';
-import FastImage from 'react-native-fast-image';
-import { useBingoWebSocket } from '../../../../../../src/context/BingoGameWebsocket';
-import {useTranslation} from 'react-i18next';
+
+
+const CHINKO_SOUND_NAME = 'chinko_message_sound.mp3';
 
 export const ChinkoMessage = () => {
   const screenWidth = Dimensions.get('window').width;
@@ -18,7 +22,24 @@ export const ChinkoMessage = () => {
   const [messageData, setMessageData] = useState(null);
   const timeoutRef = useRef(null);
   const { messages } = useBingoWebSocket();
-  const {t} = useTranslation();
+
+  const chinkoSoundRef = useRef(null);
+
+  useEffect(() => {
+      const sound = new Sound(CHINKO_SOUND_NAME, Sound.MAIN_BUNDLE, (error) => {
+          if (error) {
+              return;
+          }
+          chinkoSoundRef.current = sound;
+      });
+
+      return () => {
+          if (chinkoSoundRef.current) {
+              chinkoSoundRef.current.release();
+              chinkoSoundRef.current = null;
+          }
+      };
+  }, []);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.value }],
@@ -29,14 +50,26 @@ export const ChinkoMessage = () => {
     setMessageData(null);
   }, []);
 
+  const playChinkoSound = useCallback(() => {
+      if (chinkoSoundRef.current && !chinkoSoundRef.current.isPlaying()) {
+          chinkoSoundRef.current.play((success) => {
+              if (success) {
+              } else {
+              }
+          });
+      }
+  }, []);
+
   const showMessage = useCallback((msg) => {
     if (msg?.type === 'row-completed') {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
       setMessageData({
-        text: `${msg.username} ${msg.rowNumber}. ${t('bingoGame.chinko')}`,
+        text: `${msg.username} ${msg.rowNumber}. satır çinkosunu yaptı!`,
         profilePhoto: msg.profilePhoto
       });
+
+      playChinkoSound();
 
       translateX.value = withTiming(0, {
         duration: 300,
@@ -56,14 +89,14 @@ export const ChinkoMessage = () => {
         );
       }, 3000);
     }
-  }, [screenWidth, translateX, handleAnimationEnd]);
+  }, [screenWidth, translateX, handleAnimationEnd, playChinkoSound]);
 
   useEffect(() => {
     const lastMessage = messages[messages.length - 1];
     if (lastMessage?.type === 'row-completed') {
       showMessage(lastMessage);
     }
-  }, [messages]);
+  }, [messages, showMessage]);
 
   useEffect(() => () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);

@@ -1,17 +1,17 @@
-import React from 'react';
-import GrandientText from '../../../../../../src/components/GrandientText';
-import { useTheme } from '../../../../../../src/context/ThemeContext';
-import {useTranslation} from 'react-i18next';
+import GrandientText from "../../../../../../src/components/GrandientText";
+import React from "react";
+import { useTheme } from "../../../../../../src/context/ThemeContext";
+import { isTablet } from "../../../../../../src/utils/isTablet";
+
+const TABLET_DEVICE = isTablet();
 
 const ScoreboardHeader = () => {
     const { colors } = useTheme();
-    const { t } = useTranslation();
-
     return (
            <GrandientText
-                     text={t('bingoGame.scoreBoard')}
+                     text="Skor Tablosu"
                      colors={colors.gameCenterText}
-                     textStyle={{ fontSize: 28 }}
+                     textStyle={{ fontSize: TABLET_DEVICE ? 28 : 20 }}
                      gradientDirection="horizontal"
                  />
     );

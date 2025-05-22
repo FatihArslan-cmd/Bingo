@@ -1,5 +1,11 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
-import { View, StyleSheet, Animated, Platform, FlatList } from 'react-native';
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { TabActions } from "@react-navigation/native";
+import { BingoContext } from "bingo/src/context/BingoGameContext";
+import { Animated, FlatList, Platform, StyleSheet, View } from "react-native";
+import { useBingoWebSocket } from "../../../../../../src/context/BingoGameWebsocket.js";
+import { useTheme } from "../../../../../../src/context/ThemeContext.jsx";
+import { isTablet } from "../../../../../../src/utils/isTablet.js";
+
 import {
   Surface,
   List,
@@ -10,21 +16,18 @@ import {
   IconButton,
   TouchableRipple
 } from 'react-native-paper';
-import { BingoContext } from 'bingo/src/context/BingoGameContext';
-import { useBingoWebSocket } from '../../../../../../src/context/BingoGameWebsocket.js';
-import { useTheme } from '../../../../../../src/context/ThemeContext.jsx';
-import {useTranslation} from 'react-i18next';
+
+const TABLET_DEVICE = isTablet();
 
 const UserListPanel = () => {
-  const { membersInfo,bgcolor } = useContext(BingoContext);
+  const { membersInfo } = useContext(BingoContext);
   const [isExpanded, setIsExpanded] = useState(false);
   const animation = useRef(new Animated.Value(0)).current;
-  const { colors } = useTheme(); // Get colors from your custom theme
+  const { colors } = useTheme();
   const maxListHeight = useRef(new Animated.Value(0)).current;
   const { messages } = useBingoWebSocket();
   const [users, setUsers] = useState([]);
-  const primaryNavigationColor = colors.navigationFill; // Use navigationFill from theme for primary color
-  const { t } = useTranslation();
+  const primaryNavigationColor = colors.navigationFill;
 
   useEffect(() => {
     Animated.timing(animation, {
@@ -128,28 +131,29 @@ const UserListPanel = () => {
 
 
   const opacity = animation.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 1],
+    inputRange: [0, 0.5, 1],
+    outputRange: [0, 0.5, 1],
+    extrapolate: 'clamp',
   });
 
   const renderUserItem = ({ item }) => (
     <TouchableRipple
       onPress={() => console.log(`Tapped on ${item.name}`)}
-      rippleColor={colors.ripple} // Use themed ripple color
+      rippleColor={colors.ripple}
     >
       <List.Item
         title={item.name}
-        titleStyle={[styles.userName, { color: colors.text }]} // Themed username text color
+        titleStyle={[styles.userName, { color: colors.text }]}
         left={() => (
           <View style={styles.avatarContainer}>
             {item.profilePhoto ? (
-              <Avatar.Image size={40} source={{ uri: item.profilePhoto }} />
+              <Avatar.Image size={TABLET_DEVICE ? 40 : 30} source={{ uri: item.profilePhoto }} />
             ) : (
               <Avatar.Text
-                size={40}
+                size={TABLET_DEVICE ? 40 : 30}
                 label={item.name.substring(0, 2).toUpperCase()}
-                backgroundColor={item.isOnline ? colors.primary : colors.border} // Themed avatar background
-                color={colors.card} // Avatar text color
+                backgroundColor={item.isOnline ? colors.primary : colors.border}
+                color={colors.card}
               />
             )}
             <Badge
@@ -166,12 +170,12 @@ const UserListPanel = () => {
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
               <Text style={[styles.statLabel, { color: colors.subText }]}>Bingo</Text>
-              <Text style={[styles.statValue, { color: colors.text }]}>{item.score}</Text> 
+              <Text style={[styles.statValue, { color: colors.text }]}>{item.score}</Text>
             </View>
             <Divider style={{ ...styles.verticalDivider, backgroundColor: colors.border }} />
             <View style={styles.statItem}>
-              <Text style={[styles.statLabel, { color: colors.subText }]}>Cinko</Text> 
-              <Text style={[styles.statValue, { color: colors.text }]}>{item.cinko}</Text> 
+              <Text style={[styles.statLabel, { color: colors.subText }]}>Cinko</Text>
+              <Text style={[styles.statValue, { color: colors.text }]}>{item.cinko}</Text>
             </View>
           </View>
         )}
@@ -182,17 +186,15 @@ const UserListPanel = () => {
   return (
     <Surface style={[styles.container, { backgroundColor: colors.background }]} elevation={2}>
       <TouchableRipple onPress={toggleExpand}
-        rippleColor={colors.ripple} // Themed ripple color
+        rippleColor={colors.ripple}
       >
         <View style={styles.headerContainer}>
           <View style={styles.headerContent}>
-            <IconButton icon="account-group" size={24} iconColor={primaryNavigationColor} /> 
-            <Text variant="titleLarge" style={[styles.playerText, { color: primaryNavigationColor }]}>
-              {t('bingoGame.players')}
-              </Text> 
+            <IconButton icon="account-group" size={TABLET_DEVICE ? 24 : 18} iconColor={primaryNavigationColor} />
+            <Text variant="titleLarge" style={[styles.playerText, { color: primaryNavigationColor }]}>Players</Text>
           </View>
           <Animated.View style={{ transform: [{ rotate }] }}>
-            <IconButton icon="chevron-down" size={24} iconColor={primaryNavigationColor} />
+            <IconButton style={{ marginEnd: 0 }} icon="chevron-down" size={TABLET_DEVICE ? 24 : 18} iconColor={primaryNavigationColor} />
           </Animated.View>
         </View>
       </TouchableRipple>
@@ -206,14 +208,16 @@ const UserListPanel = () => {
           }
         ]}
       >
-        <FlatList
-          data={displayedUsers}
-          keyExtractor={(item) => item.username || item.userId.toString()}
-          renderItem={renderUserItem}
-          ItemSeparatorComponent={() => <Divider style={{ backgroundColor: colors.border }} />} // Themed divider color
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.listContent}
-        />
+        {(isExpanded || displayedUsers.length > 0) && (
+           <FlatList
+            data={displayedUsers}
+            keyExtractor={(item) => item.username || item.userId?.toString()}
+            renderItem={renderUserItem}
+            ItemSeparatorComponent={() => <Divider style={{ backgroundColor: colors.border }} />}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.listContent}
+          />
+        )}
       </Animated.View>
     </Surface>
   );
@@ -221,11 +225,10 @@ const UserListPanel = () => {
 
 const styles = StyleSheet.create({
   container: {
-    margin: 10,
     overflow: 'hidden',
   },
   headerContainer: {
-    padding: 12,
+    paddingTop: 25,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -257,26 +260,28 @@ const styles = StyleSheet.create({
   statsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
+    marginLeft: 4,
   },
   statItem: {
     alignItems: 'center',
     marginHorizontal: 8,
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: TABLET_DEVICE ? 12 : 8,
     opacity: 0.7,
   },
   statValue: {
-    fontSize: 14,
+    fontSize: TABLET_DEVICE ? 14 : 10,
     fontWeight: '600',
   },
   verticalDivider: {
-    height: 24,
+    height: TABLET_DEVICE ? 24 : 16,
     width: 1,
   },
   playerText: {
     fontWeight: 'bold',
+    fontSize: TABLET_DEVICE ? 16 : 10,
+    marginLeft: 4,
   }
 });
 

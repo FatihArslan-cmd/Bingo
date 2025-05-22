@@ -1,8 +1,11 @@
-import React, { useRef, useEffect, useContext, useState } from 'react';
-import { TouchableOpacity, Text, StyleSheet, Animated, Easing } from 'react-native';
-import { BingoContext } from 'bingo/src/context/BingoGameContext';
-import { useBingoWebSocket } from '../../../../../../src/context/BingoGameWebsocket.js';
-import { useTheme } from '../../../../../../src/context/ThemeContext.jsx';
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { BingoContext } from "bingo/src/context/BingoGameContext";
+import { Animated, Easing, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { useBingoWebSocket } from "../../../../../../src/context/BingoGameWebsocket.js";
+import { useTheme } from "../../../../../../src/context/ThemeContext.jsx";
+import { isTablet } from "../../../../../../src/utils/isTablet.js";
+
+const TABLET_DEVICE = isTablet();
 
 const DrawButton = () => {
   const { bgColor, currentNumber, setCurrentNumber, drawNumber, drawNumberEnabled, isCountingDown, isCooldownActive, cooldownRemaining } = useContext(BingoContext);
@@ -68,7 +71,7 @@ const DrawButton = () => {
 
   const translateY = animatedValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, -150],
+    outputRange: [0,TABLET_DEVICE ? -150 : -100],
   });
   const scale = animatedValue.interpolate({
     inputRange: [0, 1],
@@ -92,22 +95,17 @@ const DrawButton = () => {
 
 const styles = StyleSheet.create({
   circle: {
-    width: 60,
-    height: 60,
+    width: TABLET_DEVICE ? 60 : 45,
+    height: TABLET_DEVICE ? 60 : 45,
     borderRadius: 30,
     borderWidth: 2,
-    marginBottom: 20,
+    marginBottom: TABLET_DEVICE ? 20 : 0,
     justifyContent: 'center',
     alignItems: 'center'
   },
   drawnNumberText: {
-    fontSize: 28,
+    fontSize: TABLET_DEVICE ? 28 : 20,
     fontWeight: 'bold',
-  },
-  cooldownText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: 'red',
   },
 });
 

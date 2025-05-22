@@ -1,7 +1,10 @@
-import React, { useEffect, useRef, useContext } from 'react';
-import { View, StyleSheet, Animated, Easing } from 'react-native';
-import { BingoContext } from 'bingo/src/context/BingoGameContext';
-import { useTheme } from '../../../../../../src/context/ThemeContext';
+import React, { useContext, useEffect, useRef } from "react";
+import { BingoContext } from "bingo/src/context/BingoGameContext";
+import { Animated, Easing, StyleSheet, View } from "react-native";
+import { useTheme } from "../../../../../../src/context/ThemeContext";
+import { isTablet } from "../../../../../../src/utils/isTablet";
+
+const TABLET_DEVICE = isTablet();
 
 const Countdown = () => {
     const { countdown, isCountingDown } = useContext(BingoContext);
@@ -143,15 +146,15 @@ const Countdown = () => {
 const styles = StyleSheet.create({
     container: {
         position: 'absolute',
-        top: 80,
+        top: TABLET_DEVICE ? 80 : 30,
         left: 0,
         right: 0,
         alignItems: 'center',
         zIndex: 1000,
     },
     countdownWrapper: {
-        width: 80,
-        height: 80,
+        width: TABLET_DEVICE ? 80 : 60,
+        height: TABLET_DEVICE ? 80 : 60,
         borderRadius: 40,
         justifyContent: 'center',
         alignItems: 'center',
@@ -165,8 +168,8 @@ const styles = StyleSheet.create({
         overflow: 'visible',
     },
     innerCircle: {
-        width: 70,
-        height: 70,
+        width: TABLET_DEVICE ? 70 : 50,
+        height: TABLET_DEVICE ? 70 : 50,
         borderRadius: 35,
         justifyContent: 'center',
         alignItems: 'center',
@@ -182,7 +185,7 @@ const styles = StyleSheet.create({
         borderRadius: 35,
     },
     countdownText: {
-        fontSize: 32,
+        fontSize: TABLET_DEVICE ? 32 : 20,
         fontWeight: 'bold',
     },
     decorativeDot: {
