@@ -1,5 +1,4 @@
 import React, { memo, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { BlurView } from "@react-native-community/blur";
 import { BingoContext } from "bingo/src/context/BingoGameContext";
 import { Dimensions, FlatList, Image, StyleSheet, View } from "react-native";
 
@@ -16,7 +15,7 @@ import {
 
 const { height } = Dimensions.get('window');
 
-const MessageComponent = memo(() => { 
+const MessageComponent = memo(() => {
     const { isMessageModalVisible, closeMessageModal, chatMessages, sendChatMessageContext } = useContext(BingoContext);
     const [currentMessage, setCurrentMessage] = useState('');
     const flatListRef = useRef(null);
@@ -31,22 +30,20 @@ const MessageComponent = memo(() => {
     const renderMessage = useCallback(({ item }) => {
         return (
             <View style={styles.messageContainer}>
-                <Image
-                    style={styles.profileImage}
-                    source={item.profilePhoto}
-                />
-                <Card style={styles.messageCard}>
-                    <View style={styles.messageContentContainer}>
-                        <Text variant="bodyMedium" style={styles.senderName}>{item.username || 'Unknown Sender'}</Text>
-                        <Text variant="bodyMedium" style={styles.messageText}>{item.message}</Text>
-                        <Text variant="bodySmall" style={styles.messageTimestamp}>
-                            {new Date(item.timestamp).toLocaleTimeString()}
-                        </Text>
-                    </View>
-                </Card>
+                 {item.message ? (
+                    <Card style={styles.messageCard}>
+                        <View style={styles.messageContentContainer}>
+                            <Text variant="bodyMedium" style={styles.senderName}>{item.username || 'Unknown Sender'}</Text>
+                            <Text variant="bodyMedium" style={styles.messageText}>{item.message}</Text>
+                            <Text variant="bodySmall" style={styles.messageTimestamp}>
+                                {item.timestamp ? new Date(item.timestamp).toLocaleTimeString() : 'No timestamp'}
+                            </Text>
+                        </View>
+                    </Card>
+                ) : null}
             </View>
         );
-    }, []); 
+    }, []);
 
     useEffect(() => {
         if (chatMessages.length > 0 && flatListRef.current) {
@@ -65,12 +62,7 @@ const MessageComponent = memo(() => {
                 contentContainerStyle={styles.modalContainer}
                 style={styles.modalStyle}
             >
-                <BlurView
-                    style={styles.absolute}
-                    blurType="light"
-                    blurAmount={5}
-                    reducedTransparencyFallbackColor="white"
-                />
+                <View style={[styles.absolute, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]} />
 
                 <Surface style={styles.modalContent} elevation={4}>
                     <View style={styles.headerContainer}>
@@ -87,7 +79,7 @@ const MessageComponent = memo(() => {
                         ref={flatListRef}
                         data={chatMessages}
                         renderItem={renderMessage}
-                        keyExtractor={(item, index) => item.userId + index.toString()}
+                        keyExtractor={(item, index) => `${item.userId}-${index}`}
                         contentContainerStyle={styles.messageList}
                         showsVerticalScrollIndicator={false}
                         inverted={false}
@@ -106,7 +98,6 @@ const MessageComponent = memo(() => {
                             onChangeText={setCurrentMessage}
                             style={styles.messageInput}
                             contentStyle={styles.messageInputContent}
-                            placeholderTextAlign="center"
                         />
                         <TouchableRipple
                             onPress={sendMessage}
@@ -146,7 +137,7 @@ const styles = StyleSheet.create({
     },
     modalContent: {
         height: height * 0.50,
-        backgroundColor: 'rgba(65, 65, 65, 0.5)',
+        backgroundColor: 'rgba(65, 65, 65, 0.8)',
         borderTopLeftRadius: 50,
         borderTopRightRadius: 50,
         padding: 15,
@@ -156,6 +147,7 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         display: 'flex',
         flexDirection: 'column',
+        overflow: 'hidden',
     },
     headerContainer: {
         alignItems: 'flex-end',
@@ -167,67 +159,73 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         flexGrow: 1,
         justifyContent: 'flex-start',
-        alignItems: 'stretch', 
+        alignItems: 'stretch',
+        paddingHorizontal: 5,
     },
     messageContainer: {
         flexDirection: 'row',
         alignItems: 'flex-start',
-        marginVertical: 10,
-        width: '100%', 
-    },
-    profileImage: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        marginRight: 10,
+        marginVertical: 5,
+        width: '100%',
     },
     messageCard: {
-        flex: 1, 
-        borderRadius: 25,
-        padding: 10,
+        flex: 1,
+        borderRadius: 15,
+        padding: 8,
+        backgroundColor: '#fff',
     },
     messageContentContainer: {
         flexDirection: 'column',
     },
     senderName: {
         fontFamily: 'Orbitron-ExtraBold',
-        marginBottom: 5,
+        marginBottom: 3,
         color: '#333',
+        fontSize: 13,
     },
     messageText: {
         color: '#333',
-        marginBottom: 5,
+        marginBottom: 3,
         fontFamily: 'Orbitron-ExtraBold',
+        fontSize: 14,
     },
     messageTimestamp: {
         color: '#888',
-        fontSize: 12,
+        fontSize: 10,
         fontFamily: 'Orbitron-ExtraBold',
         alignSelf: 'flex-end',
+        marginTop: 3,
     },
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 15,
+        marginTop: 10,
+        paddingHorizontal: 5,
     },
     messageInput: {
         flex: 1,
         marginRight: 10,
         backgroundColor: 'white',
         borderRadius: 20,
-        height: 40,
-        borderColor: 'red',
+        height: 45,
+        borderColor: 'transparent',
     },
     messageInputContent: {
         textAlignVertical: 'center',
         paddingVertical: 0,
+        paddingHorizontal: 15,
     },
     sendButton: {
         justifyContent: 'center',
         alignItems: 'center',
+        width: 45,
+        height: 45,
+        borderRadius: 22.5,
+        backgroundColor: 'blue',
     },
     sendButtonDisabled: {
-        opacity: 0.5,
+        backgroundColor: '#ccc',
+        opacity: 1,
     },
 });
 
