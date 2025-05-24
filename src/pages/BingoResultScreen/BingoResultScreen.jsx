@@ -4,7 +4,7 @@ import LottieView from "lottie-react-native";
 import React, { useContext } from "react";
 import ScoresCard from "bingo/src/pages/BingoResultScreen/components/ScoresCard";
 import WinnerCard from "bingo/src/pages/BingoResultScreen/components/WinnerCard";
-import styles from "bingo/src/pages/BingoResultScreen/styles/styles";
+import getStyles from "bingo/src/pages/BingoResultScreen/styles/getStyles";
 import { BingoContext } from "bingo/src/context/BingoGameContext";
 import { usePlayResultSound } from "bingo/src/pages/BingoResultScreen/hooks/usePlayResultSound";
 import { StatusBar, View } from "react-native";
@@ -15,6 +15,7 @@ const BingoResultScreen = () => {
     const { bingoWinnerUsername, gameScores } = useContext(BingoContext);
     const { colors, resolvedTheme } = useTheme();
     const barStyle = resolvedTheme === 'dark' ? 'light-content' : 'dark-content';
+    const styles = getStyles(); // yön ve cihaz tipine göre stil al
 
     usePlayResultSound(); 
 

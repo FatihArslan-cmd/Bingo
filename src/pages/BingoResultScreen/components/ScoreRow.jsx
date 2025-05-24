@@ -1,13 +1,15 @@
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import React from "react";
-import styles from "bingo/src/pages/BingoResultScreen/styles/styles";
+import getStyles from "bingo/src/pages/BingoResultScreen/styles/getStyles";
 import { View } from "react-native";
 import { TouchableRipple } from "react-native-paper";
 import { Text } from "react-native-paper";
 import { useTheme } from "../../../../../../src/context/ThemeContext";
 
 const ScoreRow = ({ username, score, index }) => {
-const { colors } = useTheme();
+    const { colors } = useTheme();
+    const styles = getStyles();
+
     const getPlayerRankStyle = (index) => {
         if (index === 0) return { backgroundColor: '#FFD700' }; // Gold
         if (index === 1) return { backgroundColor: '#C0C0C0' }; // Silver

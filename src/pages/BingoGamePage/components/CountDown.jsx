@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef } from "react";
 import { BingoContext } from "bingo/src/context/BingoGameContext";
-import { Animated, Easing, StyleSheet, View } from "react-native";
+import { Animated, Easing, StyleSheet, View, useWindowDimensions } from "react-native";
 import { useTheme } from "../../../../../../src/context/ThemeContext";
 import { isTablet } from "../../../../../../src/utils/isTablet";
 
@@ -12,23 +12,25 @@ const Countdown = () => {
     const opacityAnim = useRef(new Animated.Value(1)).current;
     const translateYAnim = useRef(new Animated.Value(-100)).current;
     const opacityContainerAnim = useRef(new Animated.Value(0)).current;
-    const {colors} = useTheme();
+    const { colors } = useTheme();
+    const { width, height } = useWindowDimensions();
+    const isLandscape = TABLET_DEVICE && width > height;
 
     useEffect(() => {
         if (isCountingDown) {
             Animated.parallel([
-              Animated.timing(translateYAnim, {
-                toValue: 80,
-                duration: 500,
-                easing: Easing.out(Easing.ease),
-                useNativeDriver: true,
-              }),
-              Animated.timing(opacityContainerAnim,{
-                toValue: 1,
-                duration: 300,
-                easing: Easing.out(Easing.ease),
-                useNativeDriver: true,
-              })
+                Animated.timing(translateYAnim, {
+                    toValue: isLandscape ? 0 : 80,
+                    duration: 500,
+                    easing: Easing.out(Easing.ease),
+                    useNativeDriver: true,
+                }),
+                Animated.timing(opacityContainerAnim, {
+                    toValue: 1,
+                    duration: 300,
+                    easing: Easing.out(Easing.ease),
+                    useNativeDriver: true,
+                })
             ]).start(() => {
                 Animated.loop(
                     Animated.sequence([
@@ -49,27 +51,26 @@ const Countdown = () => {
             });
 
         } else {
-            if(translateYAnim._value === 80) {
+            if (translateYAnim._value === (isLandscape ? 0 : 80)) {
                 Animated.parallel([
-                  Animated.timing(translateYAnim, {
-                    toValue: -100,
-                    duration: 500,
-                    easing: Easing.in(Easing.ease),
-                    useNativeDriver: true,
-                  }),
-                  Animated.timing(opacityContainerAnim,{
-                    toValue: 0,
-                    duration: 300,
-                    easing: Easing.in(Easing.ease),
-                    useNativeDriver: true,
-                  })
-              ]).start(() => {
+                    Animated.timing(translateYAnim, {
+                        toValue: -100,
+                        duration: 500,
+                        easing: Easing.in(Easing.ease),
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(opacityContainerAnim, {
+                        toValue: 0,
+                        duration: 300,
+                        easing: Easing.in(Easing.ease),
+                        useNativeDriver: true,
+                    })
+                ]).start(() => {
                     scaleAnim.setValue(1);
                 });
             }
         }
-    }, [isCountingDown]);
-
+    }, [isCountingDown, isLandscape]);
 
     useEffect(() => {
         Animated.sequence([
@@ -91,8 +92,8 @@ const Countdown = () => {
             style={[
                 styles.container,
                 {
-                  opacity: opacityContainerAnim,
-                  transform: [{ translateY: translateYAnim }],
+                    opacity: opacityContainerAnim,
+                    transform: [{ translateY: translateYAnim }],
                 },
             ]}
         >
@@ -106,14 +107,14 @@ const Countdown = () => {
                     },
                 ]}
             >
-                <View style={[styles.innerCircle, { backgroundColor: colors.background, borderColor: colors.border }]}> 
+                <View style={[styles.innerCircle, { backgroundColor: colors.background, borderColor: colors.border }]}>
                     <View style={[styles.gradientOverlay, { backgroundColor: colors.card }]} />
                     <Animated.Text
                         style={[
                             styles.countdownText,
                             {
                                 opacity: opacityAnim,
-                                color: colors.text, 
+                                color: colors.text,
                             },
                         ]}
                     >
@@ -128,12 +129,10 @@ const Countdown = () => {
                             styles.decorativeDot,
                             {
                                 transform: [
-                                    {
-                                        rotate: `${index * (360 / 8)}deg`,
-                                    },
+                                    { rotate: `${index * (360 / 8)}deg` },
                                     { translateY: -35 },
                                 ],
-                                backgroundColor: colors.primary, 
+                                backgroundColor: colors.primary,
                             },
                         ]}
                     />

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { BingoContext } from "bingo/src/context/BingoGameContext";
-import { Animated, Easing, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { Animated, Dimensions, Easing, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { useBingoWebSocket } from "../../../../../../src/context/BingoGameWebsocket.js";
 import { useTheme } from "../../../../../../src/context/ThemeContext.jsx";
 import { isTablet } from "../../../../../../src/utils/isTablet.js";
@@ -16,6 +16,19 @@ const DrawButton = () => {
   const [isNumberAnimatedUp, setIsNumberAnimatedUp] = useState(false);
   const { colors } = useTheme();
 
+  const [isLandscape, setIsLandscape] = useState(Dimensions.get('window').width > Dimensions.get('window').height);
+
+  useEffect(() => {
+    const onChange = ({ window }) => {
+      setIsLandscape(window.width > window.height);
+    };
+
+    const subscription = Dimensions.addEventListener('change', onChange);
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
   useEffect(() => {
     const numberDrawnMessages = messages.filter(msg => msg.type === 'number-drawn');
     if (numberDrawnMessages.length > 0) {
@@ -29,13 +42,12 @@ const DrawButton = () => {
       const newNumber = drawnNumberMessage.number;
       if (numberRef.current !== newNumber) {
         setCurrentNumber(newNumber);
-        numberRef.current = newNumber; 
-        setIsNumberAnimatedUp(false); 
-        animateNumberChangeUp(); 
+        numberRef.current = newNumber;
+        setIsNumberAnimatedUp(false);
+        animateNumberChangeUp();
       }
     }
   }, [drawnNumberMessage, setCurrentNumber]);
-
 
   useEffect(() => {
     if (!isCountingDown && isNumberAnimatedUp) {
@@ -71,8 +83,9 @@ const DrawButton = () => {
 
   const translateY = animatedValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [0,TABLET_DEVICE ? -150 : -100],
+    outputRange: [0, TABLET_DEVICE ? (isLandscape ? -75 : -150) : (isLandscape ? -50 : -100)],
   });
+
   const scale = animatedValue.interpolate({
     inputRange: [0, 1],
     outputRange: [1, 2.60],
@@ -81,13 +94,13 @@ const DrawButton = () => {
   return (
     <TouchableOpacity
       onPress={drawNumberEnabled && !isCooldownActive ? drawNumber : null}
-      style={[styles.circle, { borderColor: bgColor, backgroundColor: colors.card },]} 
+      style={[styles.circle, { borderColor: bgColor, backgroundColor: colors.card }]}
       disabled={!drawNumberEnabled || isCooldownActive}
     >
       {currentNumber !== null && (
-          <Animated.View style={{ transform: [{ translateY }, { scale }] }}>
-              <Text style={[styles.drawnNumberText, { color: colors.text }]}>{currentNumber}</Text>
-          </Animated.View>
+        <Animated.View style={{ transform: [{ translateY }, { scale }] }}>
+          <Text style={[styles.drawnNumberText, { color: colors.text }]}>{currentNumber}</Text>
+        </Animated.View>
       )}
     </TouchableOpacity>
   );
