@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { TabActions } from "@react-navigation/native";
 import { BingoContext } from "bingo/src/context/BingoGameContext";
-import { Animated, FlatList, Platform, StyleSheet, View } from "react-native";
+import { Animated, FlatList, StyleSheet, View } from "react-native";
 import { useBingoWebSocket } from "../../../../../../src/context/BingoGameWebsocket.js";
 import { useTheme } from "../../../../../../src/context/ThemeContext.jsx";
 import { isTablet } from "../../../../../../src/utils/isTablet.js";

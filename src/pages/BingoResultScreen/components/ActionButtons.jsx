@@ -1,7 +1,7 @@
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import React, { useState } from "react";
+import getStyles from "bingo/src/pages/BingoResultScreen/styles/getStyles.jsx";
 import lobbyService from "../../../../../../../GameCenter/src/pages/GameDetails/service/service.js";
-import styles from "bingo/src/pages/BingoResultScreen/styles/styles";
 import { ActivityIndicator, View } from "react-native";
 import { Text, TouchableRipple } from "react-native-paper";
 import { isTablet } from "../../../../../../src/utils/isTablet.js";
@@ -10,6 +10,7 @@ const TABLET_DEVICE = isTablet();
 
 const ActionButtons = () => {
     const [isLoading, setIsLoading] = useState(false);
+    const styles = getStyles();
 
     const handlePlayAgain = async () => {
         setIsLoading(true);

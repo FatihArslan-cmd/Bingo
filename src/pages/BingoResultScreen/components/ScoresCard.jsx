@@ -1,12 +1,14 @@
 import React from "react";
 import ScoreList from "bingo/src/pages/BingoResultScreen/components/ScoreList";
 import ScoreboardHeader from "bingo/src/pages/BingoResultScreen/components/ScoreboardHeader";
-import styles from "bingo/src/pages/BingoResultScreen/styles/styles";
+import getStyles from "bingo/src/pages/BingoResultScreen/styles/getStyles";
 import { Card, Divider } from "react-native-paper";
 import { useTheme } from "../../../../../../src/context/ThemeContext";
 
 const ScoresCard = ({ gameScores }) => {
     const { colors } = useTheme();
+    const styles = getStyles();
+    
     return (
         <Card style={[styles.scoresCard,{backgroundColor:colors.card}]}>
             <ScoreboardHeader />

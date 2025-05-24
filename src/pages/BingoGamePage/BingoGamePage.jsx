@@ -13,18 +13,29 @@ import React from "react";
 import UserListPanel from "bingo/src/pages/BingoGamePage/components/UserList";
 import useDisableBackButton from "../../../../../src/pages/HomeScreen/hooks/useDisableBackButton";
 import { ChinkoMessage } from "bingo/src/pages/BingoGamePage/components/ChinkoMessage";
-import { SafeAreaView, StatusBar, StyleSheet, View } from "react-native";
 import { useTheme } from "../../../../../src/context/ThemeContext";
+
+import {
+    SafeAreaView,
+    StatusBar,
+    StyleSheet,
+    View,
+    useWindowDimensions,
+} from "react-native";
+
 
 const BingoGamePage = () => {
     useDisableBackButton();
     const { colors } = useTheme();
+    const { width, height } = useWindowDimensions();
+
+    const isLandscape = width > height;
 
     return (
-        <SafeAreaView style={[styles.safeAreaContainer, { backgroundColor: colors.background }]}> {/* Apply background color from theme */}
-            <StatusBar barStyle="transparent"/>
-            <ChinkoMessage/>
-            <LastMessage/>
+        <SafeAreaView style={[styles.safeAreaContainer, { backgroundColor: colors.background }]}>
+            <StatusBar barStyle="transparent" />
+            <ChinkoMessage />
+            <LastMessage />
             <View style={styles.header}>
                 <View style={styles.userPanelContainer}>
                     <UserListPanel />
@@ -35,7 +46,10 @@ const BingoGamePage = () => {
             </View>
 
             <Countdown />
-            <View style={styles.contentContainer}>
+            <View style={[
+                styles.contentContainer,
+                { marginTop: isLandscape ? 100 : 50 }
+            ]}>
                 <DrawButton />
                 <BingoCard />
             </View>
@@ -47,8 +61,7 @@ const BingoGamePage = () => {
             <DrawAllNumbersButton />
             <EmojiPanel />
             <DrawnNumbersPanel />
-
-            <MessageComponent/>
+            <MessageComponent />
         </SafeAreaView>
     );
 };
@@ -78,7 +91,6 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
         alignItems: 'center',
-        marginTop: 50,
         marginBottom: 20,
     },
     emojiButtonContainer: {

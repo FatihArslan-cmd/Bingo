@@ -1,11 +1,13 @@
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import React from "react";
-import styles from "bingo/src/pages/BingoResultScreen/styles/styles";
-import { Avatar, Badge, Card, Text } from "react-native-paper";
+import getStyles from "bingo/src/pages/BingoResultScreen/styles/getStyles";
+import { Badge, Card, Text } from "react-native-paper";
 import { useTheme } from "../../../../../../src/context/ThemeContext";
 
 const WinnerCard = ({ bingoWinnerUsername, gameScores }) => {
     const { colors } = useTheme();
+    const styles = getStyles();
+
     return (
         <Card style={[styles.winnerCard,{backgroundColor:colors.card}]}>
             <Card.Content style={styles.winnerCardContent}>

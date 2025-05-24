@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { BingoContext } from "bingo/src/context/BingoGameContext";
-import { Dimensions, FlatList, Image, StyleSheet, View } from "react-native";
+import { Dimensions, FlatList, StyleSheet, View } from "react-native";
 
 import {
     Modal,

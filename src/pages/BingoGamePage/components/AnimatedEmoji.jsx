@@ -1,4 +1,3 @@
-import FastImage from "react-native-fast-image";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { BingoContext } from "bingo/src/context/BingoGameContext";
 import { Animated, StyleSheet, View } from "react-native";
