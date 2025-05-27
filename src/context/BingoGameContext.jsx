@@ -66,7 +66,7 @@ export const BingoContextProvider = ({ children }) => {
     const ttsLanguageCode = ttsLanguageMap[currentI18nLanguage] || ttsLanguageMap['en'];
 
     Tts.setDefaultLanguage(ttsLanguageCode)
-      .catch(err => console.warn(`TTS dilini ayarlarken hata oluştu: ${ttsLanguageCode}`, err));
+      .catch(err => console.warn(err));
 
   }, [i18n.language]);
 
@@ -94,7 +94,7 @@ export const BingoContextProvider = ({ children }) => {
 
 
       } catch (error) {
-        setCardError("Kart yüklenirken bir hata oluştu.");
+        setCardError("Error");
       } finally {
         setIsCardLoading(false);
       }

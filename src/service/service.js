@@ -2,12 +2,7 @@ import api from "../../../../src/shared/states/api";
 import { getToken } from "../../../../src/shared/states/api";
 
 const getUserBingoCard = async (username) => {
-    if (!username) {
-        console.error("Kullanıcı adı bulunamadı.");
-        return { bingoCard: null, cardColor: null, membersInfo: null };
-    }
-
-    try {
+  try {
         const token = getToken();
         const response = await api.get('/lobby/listUserLobby', {
             headers: { Authorization: `Bearer ${token}` },
@@ -24,7 +19,6 @@ const getUserBingoCard = async (username) => {
                     userId: member.id,
                 }));
             } else {
-                console.warn("API'da members verisi bulunamadı veya beklenen formatta değil.");
                 membersInfo = null; 
             }
 
@@ -36,19 +30,15 @@ const getUserBingoCard = async (username) => {
                 if (userBingoCard) {
                     return { bingoCard: userBingoCard, cardColor: userCardColor, membersInfo: membersInfo };
                 } else {
-                    console.warn(`${username} için bingo kartı bulunamadı.`);
                     return { bingoCard: null, cardColor: null, membersInfo: membersInfo };
                 }
             } else {
-                console.warn("API'da bingoCards veya cardColors verisi yok.");
                 return { bingoCard: null, cardColor: null, membersInfo: membersInfo };
             }
         } else {
-            console.warn("API'da lobby verisi yok.");
             return { bingoCard: null, cardColor: null, membersInfo: null }; 
         }
     } catch (error) {
-        console.error("Bingo kartı alınamadı:", error);
         throw error;
     }
 };

@@ -35,10 +35,7 @@ const LogoutButton = () => {
     } catch (error) {
       console.error("Error ending game on logout:", error);
       if (error.response && error.response.status === 403) {
-        console.log("403 hatası alındı, Tabs sayfasına yönlendiriliyor.");
         navigation.navigate('Tabs');
-      } else {
-        console.error("Logout sırasında beklenmeyen bir hata oluştu:", error);
       }
     }
   }, [setIsLogoutModalVisible, navigation]); 

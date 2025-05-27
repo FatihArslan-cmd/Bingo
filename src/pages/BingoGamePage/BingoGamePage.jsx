@@ -11,6 +11,7 @@ import LogoutButton from "bingo/src/pages/BingoGamePage/components/LogoutButton"
 import MessageComponent from "bingo/src/pages/BingoGamePage/components/MessageComponent";
 import React from "react";
 import UserListPanel from "bingo/src/pages/BingoGamePage/components/UserList";
+import useDailyPlayDuration from "bingo/src/pages/BingoGamePage/hooks/useDailyPlayDuration";
 import useDisableBackButton from "../../../../../src/pages/HomeScreen/hooks/useDisableBackButton";
 import { ChinkoMessage } from "bingo/src/pages/BingoGamePage/components/ChinkoMessage";
 import { useTheme } from "../../../../../src/context/ThemeContext";
@@ -23,13 +24,14 @@ import {
     useWindowDimensions,
 } from "react-native";
 
-
 const BingoGamePage = () => {
     useDisableBackButton();
     const { colors } = useTheme();
     const { width, height } = useWindowDimensions();
 
     const isLandscape = width > height;
+
+    useDailyPlayDuration('bingo');
 
     return (
         <SafeAreaView style={[styles.safeAreaContainer, { backgroundColor: colors.background }]}>
@@ -62,6 +64,7 @@ const BingoGamePage = () => {
             <EmojiPanel />
             <DrawnNumbersPanel />
             <MessageComponent />
+
         </SafeAreaView>
     );
 };
