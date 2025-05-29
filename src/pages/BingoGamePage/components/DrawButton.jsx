@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { BingoContext } from "bingo/src/context/BingoGameContext";
 import { Animated, Dimensions, Easing, StyleSheet, Text, TouchableOpacity } from "react-native";
-import { useBingoWebSocket } from "../../../../../../src/context/BingoGameWebsocket.js";
+import { useBingoWebSocket } from "../../../../../../src/context/BingoGameWebsocket.jsx";
 import { useTheme } from "../../../../../../src/context/ThemeContext.jsx";
 import { isTablet } from "../../../../../../src/utils/isTablet.js";
 

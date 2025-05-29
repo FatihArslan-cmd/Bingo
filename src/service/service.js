@@ -2,7 +2,7 @@ import api from "../../../../src/shared/states/api";
 import { getToken } from "../../../../src/shared/states/api";
 
 const getUserBingoCard = async (username) => {
-  try {
+    try {
         const token = getToken();
         const response = await api.get('/lobby/listUserLobby', {
             headers: { Authorization: `Bearer ${token}` },

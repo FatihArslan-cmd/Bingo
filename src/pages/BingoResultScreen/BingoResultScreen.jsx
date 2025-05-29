@@ -15,7 +15,7 @@ const BingoResultScreen = () => {
     const { bingoWinnerUsername, gameScores } = useContext(BingoContext);
     const { colors, resolvedTheme } = useTheme();
     const barStyle = resolvedTheme === 'dark' ? 'light-content' : 'dark-content';
-    const styles = getStyles(); // yön ve cihaz tipine göre stil al
+    const styles = getStyles();
 
     usePlayResultSound(); 
 

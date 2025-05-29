@@ -1,6 +1,8 @@
 import FastImage from "react-native-fast-image";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import Sound from "react-native-sound";
+import { BingoContext } from "bingo/src/context/BingoGameContext";
+import { useTranslation } from "react-i18next";
 import { Dimensions, StyleSheet } from "react-native";
 import { Surface, Text } from "react-native-paper";
 import { useBingoWebSocket } from "../../../../../../src/context/BingoGameWebsocket";
@@ -22,10 +24,13 @@ export const ChinkoMessage = () => {
   const [messageData, setMessageData] = useState(null);
   const timeoutRef = useRef(null);
   const { messages } = useBingoWebSocket();
+  const { gameSettings } = useContext(BingoContext); 
+  const { t } = useTranslation();
 
   const chinkoSoundRef = useRef(null);
 
   useEffect(() => {
+      Sound.setCategory('Playback');
       const sound = new Sound(CHINKO_SOUND_NAME, Sound.MAIN_BUNDLE, (error) => {
           if (error) {
               return;
@@ -51,21 +56,23 @@ export const ChinkoMessage = () => {
   }, []);
 
   const playChinkoSound = useCallback(() => {
-      if (chinkoSoundRef.current && !chinkoSoundRef.current.isPlaying()) {
-          chinkoSoundRef.current.play((success) => {
-              if (success) {
-              } else {
-              }
-          });
+      if (!chinkoSoundRef.current || chinkoSoundRef.current.isPlaying() || !gameSettings?.sound) {
+          return;
       }
-  }, []);
+      chinkoSoundRef.current.play((success) => {
+          if (!success) {
+              console.log('Chinko sound playback failed');
+          }
+      });
+
+  }, [gameSettings]);
 
   const showMessage = useCallback((msg) => {
     if (msg?.type === 'row-completed') {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
       setMessageData({
-        text: `${msg.username} ${msg.rowNumber}. satır çinkosunu yaptı!`,
+        text: `${msg.username} ${msg.rowNumber}. ${t('bingoGame.chinko')}`,
         profilePhoto: msg.profilePhoto
       });
 

@@ -1,8 +1,9 @@
 import Tts from "react-native-tts";
 import getUserBingoCardData from "bingo/src/service/service.js";
 import { useTranslation } from "react-i18next";
-import { useBingoWebSocket } from "../../../../src/context/BingoGameWebsocket.js";
+import { useBingoWebSocket } from "../../../../src/context/BingoGameWebsocket.jsx";
 import { UserContext } from "../../../../src/context/UserContext.jsx";
+import { storage } from "../../../../src/utils/storage";
 
 import React, {
   createContext,
@@ -49,6 +50,8 @@ export const BingoContextProvider = ({ children }) => {
 
   const [membersInfo, setMembersInfo] = useState(null);
 
+  const [gameSettings, setGameSettings] = useState(null);
+
   const { sendMessage, messages } = useBingoWebSocket();
   const lastProcessedNumberDrawnRef = useRef(null);
   const lastProcessedBingoRef = useRef(null);
@@ -56,6 +59,21 @@ export const BingoContextProvider = ({ children }) => {
 
 
   const { i18n } = useTranslation();
+
+  useEffect(() => {
+    try {
+      const settingsString = storage.getString('gameSettings');
+      if (settingsString) {
+        const settings = JSON.parse(settingsString);
+        setGameSettings(settings);
+      } else {
+        setGameSettings(null); 
+      }
+    } catch (error) {
+      console.error("Failed to load game settings from storage:", error);
+      setGameSettings(null);
+    }
+  }, []);
 
   useEffect(() => {
     Tts.setDefaultRate(0.5);
@@ -66,7 +84,7 @@ export const BingoContextProvider = ({ children }) => {
     const ttsLanguageCode = ttsLanguageMap[currentI18nLanguage] || ttsLanguageMap['en'];
 
     Tts.setDefaultLanguage(ttsLanguageCode)
-      .catch(err => console.warn(err));
+      .catch(err => console.warn(`error: ${ttsLanguageCode}`, err));
 
   }, [i18n.language]);
 
@@ -94,7 +112,7 @@ export const BingoContextProvider = ({ children }) => {
 
 
       } catch (error) {
-        setCardError("Error");
+        setCardError(error);
       } finally {
         setIsCardLoading(false);
       }
@@ -143,7 +161,10 @@ export const BingoContextProvider = ({ children }) => {
       setDrawNumberEnabled(false);
       setCountdown(3);
 
-      Tts.speak(`${number}`);
+      if (gameSettings?.voiceCalloutEnabled) {
+          Tts.speak(`${number}`);
+      }
+
       lastProcessedNumberDrawnRef.current = latestMessage;
     }
 
@@ -169,8 +190,7 @@ export const BingoContextProvider = ({ children }) => {
          }
     }
 
-  }, [messages, drawnNumbers, chatMessages]);
-
+  }, [messages, drawnNumbers, chatMessages, gameSettings]);
 
   useEffect(() => {
     if (chatMessages.length > 0) {
@@ -289,7 +309,8 @@ export const BingoContextProvider = ({ children }) => {
         gameScores,
         setGameScores,
         membersInfo,
-        setMembersInfo
+        setMembersInfo,
+        gameSettings
       }}
     >
       {children}

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { BingoContext } from "bingo/src/context/BingoGameContext";
-import { Animated, StyleSheet, View } from "react-native";
+import { Animated, StyleSheet } from "react-native";
 import { Text } from "react-native-paper";
 import { useBingoWebSocket } from "../../../../../../src/context/BingoGameWebsocket";
 import { isTablet } from "../../../../../../src/utils/isTablet";
@@ -16,19 +16,16 @@ const AnimatedEmoji = () => {
   const { messages } = useBingoWebSocket();
   const emojiMessages = messages.filter(msg => msg.type === 'emoji-received');
   const [selectedEmoji, setSelectedEmoji] = useState(null);
-  const [selectedProfilePhoto, setSelectedProfilePhoto] = useState(null);
-  const [displayEmojis, setDisplayEmojis] = useState(true);
+  const [displayEmojis] = useState(true);
   const { setIsEmojiAnimating } = useContext(BingoContext);
 
   useEffect(() => {
     if (emojiMessages.length > 0 && displayEmojis) {
       const latestEmojiMessage = emojiMessages[emojiMessages.length - 1];
       const receivedEmoji = latestEmojiMessage.emoji;
-      const receivedProfilePhoto = latestEmojiMessage.profilePhoto;
 
       if (receivedEmoji) {
         setSelectedEmoji(receivedEmoji);
-        setSelectedProfilePhoto(receivedProfilePhoto);
 
         positionY.setValue(0);
         positionX.setValue(0);
@@ -40,29 +37,27 @@ const AnimatedEmoji = () => {
         const verticalTarget = TABLET_DEVICE ? -300 : -150;
         const horizontalAmplitude = TABLET_DEVICE ? 40 : 30;
         const numberOfZigs = 3;
-        const segmentDuration = totalDuration / (numberOfZigs * 2);
+        const actualSegmentDuration = totalDuration / ((numberOfZigs * 2) + 1);
 
         const fadeStartTime = totalDuration * 0.5;
         const fadeDuration = totalDuration - fadeStartTime;
         const finalScale = 2.0;
 
-        const xAnimations = [];
-        for (let i = 0; i < numberOfZigs * 2; i++) {
-            let targetX = (i % 2 === 0) ? horizontalAmplitude : -horizontalAmplitude;
-            if (i === 0) targetX = horizontalAmplitude;
-
-            xAnimations.push(Animated.timing(positionX, {
-                toValue: targetX,
-                duration: segmentDuration,
+          const xAnimationsAdjusted = [];
+          for (let i = 0; i < numberOfZigs * 2; i++) {
+               let targetX = (i % 2 === 0) ? horizontalAmplitude : -horizontalAmplitude;
+               if (i === 0) targetX = horizontalAmplitude;
+               xAnimationsAdjusted.push(Animated.timing(positionX, {
+                   toValue: targetX,
+                   duration: actualSegmentDuration,
+                   useNativeDriver: true,
+               }));
+           }
+           xAnimationsAdjusted.push(Animated.timing(positionX, {
+                toValue: 0,
+                duration: actualSegmentDuration,
                 useNativeDriver: true,
             }));
-        }
-         xAnimations.push(Animated.timing(positionX, {
-             toValue: 0,
-             duration: segmentDuration,
-             useNativeDriver: true,
-         }));
-
 
         Animated.parallel([
           Animated.timing(positionY, {
@@ -70,7 +65,7 @@ const AnimatedEmoji = () => {
             duration: totalDuration,
             useNativeDriver: true,
           }),
-          Animated.sequence(xAnimations),
+          Animated.sequence(xAnimationsAdjusted),
           Animated.sequence([
             Animated.timing(opacity, {
               toValue: 1,
@@ -90,12 +85,11 @@ const AnimatedEmoji = () => {
           }),
         ]).start(() => {
           setSelectedEmoji(null);
-          setSelectedProfilePhoto(null);
           setIsEmojiAnimating(false);
         });
       }
     }
-  }, [emojiMessages.length, displayEmojis, positionY, positionX, opacity, scale, setSelectedEmoji, setSelectedProfilePhoto, setIsEmojiAnimating]);
+  }, [emojiMessages.length, displayEmojis, positionY, positionX, opacity, scale, setSelectedEmoji, setIsEmojiAnimating]);
 
   if (!selectedEmoji || !displayEmojis) {
     return null;
@@ -115,7 +109,6 @@ const AnimatedEmoji = () => {
         },
       ]}
     >
-
       <Text style={styles.emojiText}>{selectedEmoji}</Text>
     </Animated.View>
   );

@@ -31,12 +31,10 @@ const LogoutButton = () => {
         'Content-Type': 'application/json',
       };
       await api.post('/lobby/end-game', {}, { headers });
-      console.log("End game request sent on logout with headers");
     } catch (error) {
-      console.error("Error ending game on logout:", error);
-      if (error.response && error.response.status === 403) {
+      if (error.response && (error.response.status === 403 || error.response.status === 400)) {
         navigation.navigate('Tabs');
-      }
+      } 
     }
   }, [setIsLogoutModalVisible, navigation]); 
 

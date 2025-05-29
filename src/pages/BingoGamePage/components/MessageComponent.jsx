@@ -28,6 +28,9 @@ const MessageComponent = memo(() => {
     }, [currentMessage, sendChatMessageContext]);
 
     const renderMessage = useCallback(({ item }) => {
+        if (!item || !item.message) {
+            return null;
+        }
         return (
             <View style={styles.messageContainer}>
                  {item.message ? (
@@ -36,7 +39,7 @@ const MessageComponent = memo(() => {
                             <Text variant="bodyMedium" style={styles.senderName}>{item.username || 'Unknown Sender'}</Text>
                             <Text variant="bodyMedium" style={styles.messageText}>{item.message}</Text>
                             <Text variant="bodySmall" style={styles.messageTimestamp}>
-                                {item.timestamp ? new Date(item.timestamp).toLocaleTimeString() : 'No timestamp'}
+                                {item.timestamp ? new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'No timestamp'}
                             </Text>
                         </View>
                     </Card>
@@ -46,12 +49,20 @@ const MessageComponent = memo(() => {
     }, []);
 
     useEffect(() => {
-        if (chatMessages.length > 0 && flatListRef.current) {
+        if (isMessageModalVisible && chatMessages.length > 0 && flatListRef.current) {
             setTimeout(() => {
-                flatListRef.current.scrollToEnd({ animated: true });
-            }, 100);
+                flatListRef.current?.scrollToEnd({ animated: true });
+            }, 50);
         }
-    }, [chatMessages]);
+    }, [chatMessages, isMessageModalVisible]);
+
+    useEffect(() => {
+        if (isMessageModalVisible && chatMessages.length > 0 && flatListRef.current) {
+             setTimeout(() => {
+                flatListRef.current?.scrollToEnd({ animated: false });
+             }, 50);
+        }
+    }, [isMessageModalVisible]);
 
 
     return (
@@ -62,8 +73,6 @@ const MessageComponent = memo(() => {
                 contentContainerStyle={styles.modalContainer}
                 style={styles.modalStyle}
             >
-                <View style={[styles.absolute, { backgroundColor: 'rgba(0, 0, 0, 0.5)' }]} />
-
                 <Surface style={styles.modalContent} elevation={4}>
                     <View style={styles.headerContainer}>
                         <IconButton
@@ -79,15 +88,16 @@ const MessageComponent = memo(() => {
                         ref={flatListRef}
                         data={chatMessages}
                         renderItem={renderMessage}
-                        keyExtractor={(item, index) => `${item.userId}-${index}`}
+                        keyExtractor={(item, index) => String(index)}
                         contentContainerStyle={styles.messageList}
                         showsVerticalScrollIndicator={false}
                         inverted={false}
-                        onContentSizeChange={() => {
-                            if (chatMessages.length > 0 && flatListRef.current) {
-                                flatListRef.current.scrollToEnd({ animated: false });
+                        onContentSizeChange={() => {}}
+                         onLayout={() => {
+                            if (isMessageModalVisible && chatMessages.length > 0 && flatListRef.current) {
+                                flatListRef.current?.scrollToEnd({ animated: false });
                             }
-                        }}
+                         }}
                     />
 
                     <View style={styles.inputContainer}>
@@ -98,6 +108,8 @@ const MessageComponent = memo(() => {
                             onChangeText={setCurrentMessage}
                             style={styles.messageInput}
                             contentStyle={styles.messageInputContent}
+                            outlineStyle={styles.messageInputOutline}
+                            placeholderTextColor="#888"
                         />
                         <TouchableRipple
                             onPress={sendMessage}
@@ -106,12 +118,13 @@ const MessageComponent = memo(() => {
                                 styles.sendButton,
                                 !currentMessage.trim() && styles.sendButtonDisabled
                             ]}
+                             rippleColor="rgba(255, 255, 255, .32)"
                         >
-                            <IconButton
-                                icon="send"
-                                iconColor={!currentMessage.trim() ? '#999' : 'white'}
-                                size={24}
-                            />
+                                <IconButton
+                                    icon="send"
+                                    iconColor={!currentMessage.trim() ? '#999' : 'white'}
+                                    size={24}
+                                />
                         </TouchableRipple>
                     </View>
                 </Surface>
@@ -132,19 +145,23 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-end',
     },
-    modalStyle: {
+     modalStyle: {
         backgroundColor: 'transparent',
+        margin: 0,
+        justifyContent: 'flex-end',
     },
     modalContent: {
         height: height * 0.50,
-        backgroundColor: 'rgba(65, 65, 65, 0.8)',
-        borderTopLeftRadius: 50,
-        borderTopRightRadius: 50,
+        backgroundColor: 'rgba(65, 65, 65, 0.9)',
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
         padding: 15,
+        paddingBottom: 20,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: -2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
+        shadowOffset: { width: 0, height: -5 },
+        shadowOpacity: 0.2,
+        shadowRadius: 6,
+        elevation: 10,
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
@@ -153,10 +170,13 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end',
     },
     closeButton: {
-        margin: 5,
+        margin: 0,
+        padding: 0,
+        marginRight: -5,
+        marginTop: -5,
     },
     messageList: {
-        paddingBottom: 10,
+        paddingVertical: 10,
         flexGrow: 1,
         justifyContent: 'flex-start',
         alignItems: 'stretch',
@@ -165,11 +185,11 @@ const styles = StyleSheet.create({
     messageContainer: {
         flexDirection: 'row',
         alignItems: 'flex-start',
-        marginVertical: 5,
+        marginVertical: 4,
         width: '100%',
     },
     messageCard: {
-        flex: 1,
+        maxWidth: '80%',
         borderRadius: 15,
         padding: 8,
         backgroundColor: '#fff',
@@ -179,9 +199,9 @@ const styles = StyleSheet.create({
     },
     senderName: {
         fontFamily: 'Orbitron-ExtraBold',
-        marginBottom: 3,
+        marginBottom: 2,
         color: '#333',
-        fontSize: 13,
+        fontSize: 12,
     },
     messageText: {
         color: '#333',
@@ -191,7 +211,7 @@ const styles = StyleSheet.create({
     },
     messageTimestamp: {
         color: '#888',
-        fontSize: 10,
+        fontSize: 9,
         fontFamily: 'Orbitron-ExtraBold',
         alignSelf: 'flex-end',
         marginTop: 3,
@@ -206,26 +226,30 @@ const styles = StyleSheet.create({
         flex: 1,
         marginRight: 10,
         backgroundColor: 'white',
-        borderRadius: 20,
+        borderRadius: 30,
         height: 45,
-        borderColor: 'transparent',
     },
+     messageInputOutline: {
+        borderRadius: 30,
+        borderColor: 'transparent',
+     },
     messageInputContent: {
         textAlignVertical: 'center',
         paddingVertical: 0,
         paddingHorizontal: 15,
+        fontFamily: 'Orbitron-ExtraBold',
+        lineHeight: 45,
     },
     sendButton: {
         justifyContent: 'center',
         alignItems: 'center',
-        width: 45,
-        height: 45,
-        borderRadius: 22.5,
+        width: 50,
+        height: 50,
+        borderRadius: 25,
         backgroundColor: 'blue',
     },
     sendButtonDisabled: {
         backgroundColor: '#ccc',
-        opacity: 1,
     },
 });
 
